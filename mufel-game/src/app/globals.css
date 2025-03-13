@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+:root {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html, body {
+  background-color: #111827; /* bg-gray-900 */
+  color: white;
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hace que el contenido crezca y empuje el Footer hacia abajo */
+main {
+  flex-grow: 1;
+}
+
+/* Estilos generales */
+a {
+  color: #60A5FA; /* text-blue-400 */
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: #93C5FD; /* hover:text-blue-300 */
+}
+
+/* Botones */
+button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-out;
+}
+
+.animate-fadeIn.delay-200 {
+  animation-delay: 200ms;
+}
+

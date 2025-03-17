@@ -34,7 +34,6 @@ export default function News() {
               key={noticia.id}
               className="relative rounded-lg overflow-hidden group"
             >
-              {/* Imagen de fondo */}
               <Image
                 src={noticia.imagen}
                 alt={noticia.titulo}
@@ -43,10 +42,8 @@ export default function News() {
                 className="w-full h-72 object-cover transform group-hover:scale-105 transition duration-300"
               />
 
-              {/* Capa oscura */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent group-hover:from-black/80 transition duration-300"></div>
 
-              {/* Texto sobre la imagen */}
               <div className="absolute bottom-0 left-0 w-full p-4 text-white">
                 <h3 className="text-2xl font-bold">{noticia.titulo}</h3>
                 <p className="text-gray-300">{noticia.descripcion}</p>

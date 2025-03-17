@@ -28,7 +28,6 @@ export default function Ranking() {
       <div className="container mx-auto text-center text-white">
         <h2 className="text-3xl font-bold mb-6">Ranking de Jugadores</h2>
 
-        {/* Botones de selección */}
         <div className="flex justify-center space-x-6 mb-6">
           <button
             className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
@@ -53,7 +52,6 @@ export default function Ranking() {
           </button>
         </div>
 
-        {/* Tabla del ranking */}
         <div className="w-full max-w-lg mx-auto bg-gray-700 p-6 rounded-lg shadow-lg">
           <table className="w-full text-left">
             <thead>

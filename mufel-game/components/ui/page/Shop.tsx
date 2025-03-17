@@ -43,7 +43,6 @@ export default function Shop() {
       <div className="container mx-auto text-center text-white">
         <h2 className="text-3xl font-bold mb-6">Tienda de Skins y Recompensas</h2>
 
-        {/* Botones de selección */}
         <div className="flex justify-center space-x-6 mb-6">
           <button
             className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
@@ -68,7 +67,6 @@ export default function Shop() {
           </button>
         </div>
 
-        {/* Lista de artículos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tienda[selectedCategory].map((item, index) => (
             <div key={index} className="bg-gray-800 p-6 rounded-lg shadow-lg text-left">

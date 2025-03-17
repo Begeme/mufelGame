@@ -6,7 +6,6 @@ export default function Footer() {
   return (
     <footer className="relative z-50 bg-black text-white py-10">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 text-center md:text-left">
-        {/* Sección 1: Logo */}
         <div>
           <Image
             src={"/window.svg"}
@@ -21,7 +20,6 @@ export default function Footer() {
           <p className="mt-4 text-gray-400 text-sm/6"> Todos los derechos reservados.</p>
         </div>
 
-        {/* Sección 2: Navegación */}
         <div>
           <h3 className="text-xl font-semibold mb-3">Explorar</h3>
           <ul className="space-y-2">
@@ -48,7 +46,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Sección 3: Soporte */}
         <div>
           <h3 className="text-xl font-semibold mb-3">Soporte</h3>
           <ul className="space-y-2">
@@ -75,7 +72,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Sección 4: Redes Sociales */}
         <div>
           <h3 className="text-xl font-semibold mb-3">Síguenos</h3>
           <div className="flex justify-center md:justify-start space-x-4">

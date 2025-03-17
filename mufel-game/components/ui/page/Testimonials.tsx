@@ -26,7 +26,7 @@ const testimonios = [
     nombre: "Andrea R.",
     avatar: "/img/user4.jpg",
     comentario: "Los eventos en vivo son emocionantes. Siempre hay algo nuevo.",
-    estrellas: 4,
+    estrellas: 3,
   },
 ];
 
@@ -51,27 +51,27 @@ export default function Testimonials() {
         <h2 className="text-3xl font-bold mb-6">Lo que dicen los jugadores</h2>
 
         <div className="relative bg-gray-700 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-          {/* Avatar del usuario */}
-          <Image
-            src={testimonios[currentIndex].avatar}
-            alt={testimonios[currentIndex].nombre}
-            width={80}
-            height={80}
-            className="mx-auto rounded-full mb-3"
-          />
+          {/* Encabezado: Avatar y Nombre */}
+          <div className="flex items-center mb-4">
+            <Image
+              src={testimonios[currentIndex].avatar}
+              alt={testimonios[currentIndex].nombre}
+              width={50}
+              height={50}
+              className="rounded-full mr-3"
+            />
+            <h4 className="text-lg font-bold">{testimonios[currentIndex].nombre}</h4>
+          </div>
 
-          {/* Comentario */}
-          <p className="text-lg italic">&quot;{testimonios[currentIndex].comentario}</p>
-
-          {/* Estrellas */}
-          <div className="flex justify-center mt-2 text-yellow-400">
-            {Array.from({ length: testimonios[currentIndex].estrellas }).map((_, i) => (
-              <FaStar key={i} size={20} />
+          {/* Estrellas en el centro superior */}
+          <div className="flex justify-center mb-4 text-yellow-400">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <FaStar key={i} size={22} className={i < testimonios[currentIndex].estrellas ? "text-yellow-400" : "text-gray-500"} />
             ))}
           </div>
 
-          {/* Nombre */}
-          <h4 className="mt-2 font-bold">{testimonios[currentIndex].nombre}</h4>
+          {/* Comentario del testimonio */}
+          <p className="text-lg italic text-gray-300 text-center">&quot;{testimonios[currentIndex].comentario}</p>
 
           {/* Controles para cambiar de testimonio */}
           <div className="flex justify-between mt-4">

@@ -29,7 +29,6 @@ export default function GameModes() {
       <div className="container mx-auto text-center text-white">
         <h2 className="text-3xl font-bold mb-6">Modos de Juego</h2>
 
-        {/* Botones de selección */}
         <div className="flex justify-center space-x-6 mb-6">
           <button
             className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
@@ -54,9 +53,7 @@ export default function GameModes() {
           </button>
         </div>
 
-        {/* Contenido dinámico según el modo seleccionado */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-          {/* Video o imagen */}
           <div className="w-full md:w-1/2">
             {gameModes[selectedMode].video ? (
               <video
@@ -80,7 +77,6 @@ export default function GameModes() {
             )}
           </div>
 
-          {/* Descripción */}
           <div className="w-full md:w-1/2 text-left">
             <h3 className="text-2xl font-bold">{gameModes[selectedMode].titulo}</h3>
             <p className="text-gray-300 mt-2">{gameModes[selectedMode].descripcion}</p>

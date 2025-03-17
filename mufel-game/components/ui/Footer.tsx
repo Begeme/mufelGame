@@ -8,10 +8,10 @@ export default function Footer() {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 text-center md:text-left">
         <div>
           <Image
-            src={"/window.svg"}
+            src={"/img/logo-sin-fondo.png"}
             alt={"Logo"}
-            width={250}
-            height={250}
+            width={60}
+            height={60}
             className="h-10 cursor-pointer flex justify-start"
           />
           <p className="mt-4 text-gray-400 text-sm/6">

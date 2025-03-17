@@ -10,8 +10,8 @@ export default function Footer() {
           <Image
             src={"/img/logo-sin-fondo.png"}
             alt={"Logo"}
-            width={60}
-            height={60}
+            width={40}
+            height={40}
             className="h-10 cursor-pointer flex justify-start"
           />
           <p className="mt-4 text-gray-400 text-sm/6">

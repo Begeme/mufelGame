@@ -12,14 +12,30 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 w-full bg-black bg-opacity-80 backdrop-blur-md text-white z-50">
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo */}
-        <Image src={"/img/logo-sin-fondo.png"} alt={"Logo"} width={50} height={50} className="h-10 cursor-pointer" />
+        <Link href="/" passHref>
+          <Image
+            src={"/img/logo-sin-fondo.png"}
+            alt={"Logo"}
+            width={40}
+            height={40}
+            className="h-10 cursor-pointer"
+          />
+        </Link>
 
         {/* Menú en escritorio */}
         <div className="hidden md:flex space-x-6">
-          <Link href="/game" className="hover:text-yellow-400">Juego</Link>
-          <Link href="/tracker" className="hover:text-yellow-400">Tracker</Link>
-          <Link href="/news" className="hover:text-yellow-400">Noticias</Link>
-          <Link href="/merch" className="hover:text-yellow-400">Merchandising</Link>
+          <Link href="/game" className="hover:text-yellow-400">
+            Juego
+          </Link>
+          <Link href="/tracker" className="hover:text-yellow-400">
+            Tracker
+          </Link>
+          <Link href="/news" className="hover:text-yellow-400">
+            Noticias
+          </Link>
+          <Link href="/merch" className="hover:text-yellow-400">
+            Merchandising
+          </Link>
         </div>
 
         {/* Selector de idioma y botón Registrarse */}

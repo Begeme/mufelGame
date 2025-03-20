@@ -17,7 +17,7 @@ export default function AuthForm() {
     username: "",
   });
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex para validar email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   useEffect(() => {
     validateFields();

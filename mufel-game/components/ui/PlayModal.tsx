@@ -29,13 +29,11 @@ export default function PlayModal({ isOpen, onClose }: PlayModalProps) {
           ✖
         </button>
 
-        {/* Contenido del modal */}
         <h2 className="text-3xl font-bold text-white text-center mb-8 italic">
           PREPÁRATE PARA JUGAR
         </h2>
 
         <div className="flex flex-col md:flex-row justify-center items-center gap-12 text-[#0D1221] pt-7">
-          {/* Opción 1: Crear cuenta */}
           <div className="text-center">
             <p className="text-gray-400 mb-3 text-lg">No tengo cuenta</p>
             <button className=" w-50 h-15 bg-blue-400 px-10 py-5 rounded-lg font-bold text-sm hover:bg-blue-300 transition">
@@ -43,7 +41,6 @@ export default function PlayModal({ isOpen, onClose }: PlayModalProps) {
             </button>
           </div>
 
-          {/* Opción 2: Iniciar sesión */}
           <div className="text-center">
             <p className="text-gray-400 mb-3 text-lg">Tengo una cuenta</p>
             <button className="w-50 h-15 bg-yellow-500 px-10 py-5 rounded-lg font-bold text-sm hover:bg-yellow-400 transition">

@@ -13,12 +13,10 @@ export default function AuthForm() {
         transition={{ duration: 0.5 }}
         className="bg-gray-800 p-8 rounded-lg shadow-lg w-96 text-white"
       >
-        {/* Encabezado dinámico */}
         <h2 className="text-2xl font-bold text-center mb-6">
           {isLogin ? "Iniciar Sesión" : "Regístrate"}
         </h2>
 
-        {/* Formulario */}
         <form className="space-y-4">
           {!isLogin && (
             <div>
@@ -49,7 +47,6 @@ export default function AuthForm() {
             />
           </div>
 
-          {/* Botón de envío dinámico */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded transition"
@@ -58,7 +55,6 @@ export default function AuthForm() {
           </motion.button>
         </form>
 
-        {/* Toggle entre Login y Registro */}
         <p className="text-center text-gray-300 mt-4">
           {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}
           <button

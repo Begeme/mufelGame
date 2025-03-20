@@ -19,10 +19,11 @@
   }
 }
 
-html, body {
-  background-color: #111827; /* bg-gray-900 */
+html,
+body {
+  background-color: #111827;
   color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   scroll-behavior: smooth;
   display: flex;
   flex-direction: column;
@@ -31,22 +32,19 @@ html, body {
   padding: 0;
 }
 
-/* Hace que el contenido crezca y empuje el Footer hacia abajo */
 main {
   flex-grow: 1;
 }
 
-/* Estilos generales */
 a {
-  color: #60A5FA; /* text-blue-400 */
+  color: #60a5fa;
   transition: color 0.3s;
 }
 
 a:hover {
-  color: #93C5FD; /* hover:text-blue-300 */
+  color: #93c5fd;
 }
 
-/* Botones */
 button {
   padding: 10px 16px;
   border-radius: 8px;
@@ -54,7 +52,6 @@ button {
   transition: all 0.3s;
 }
 
-/* Contenedor principal */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -79,4 +76,3 @@ button {
 .animate-fadeIn.delay-200 {
   animation-delay: 200ms;
 }
-

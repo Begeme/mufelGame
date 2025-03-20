@@ -41,7 +41,6 @@ export default function TrackerPage() {
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
 
   useEffect(() => {
-    // Datos por defecto al cargar la página
     const defaultData: PlayerData = {
       player: {
         avatar: "/img/logo-mufel.jpeg",
@@ -67,7 +66,6 @@ export default function TrackerPage() {
   }, []);
 
   const handleSearch = async (username: string) => {
-    // Simulación de datos obtenidos de una API
     const mockData: PlayerData = {
       player: {
         avatar: "/img/logo-mufel.jpeg",

@@ -6,25 +6,25 @@ import { FaStar } from "react-icons/fa";
 const testimonios = [
   {
     nombre: "Carlos G.",
-    avatar: "/img/user1.jpg",
+    avatar: "/img/logo-mufel.jpeg",
     comentario: "¡El mejor juego que he jugado en años! La jugabilidad es increíble.",
     estrellas: 5,
   },
   {
     nombre: "Laura P.",
-    avatar: "/img/user2.jpg",
+    avatar: "/img/logo-mufel.jpeg",
     comentario: "Me encanta el modo Roguelike. Cada partida es un desafío diferente.",
     estrellas: 4,
   },
   {
     nombre: "Diego M.",
-    avatar: "/img/user3.jpg",
+    avatar: "/img/logo-mufel.jpeg",
     comentario: "Los gráficos y la jugabilidad son increíbles. ¡Muy recomendado!",
     estrellas: 5,
   },
   {
     nombre: "Andrea R.",
-    avatar: "/img/user4.jpg",
+    avatar: "/img/logo-mufel.jpeg",
     comentario: "Los eventos en vivo son emocionantes. Siempre hay algo nuevo.",
     estrellas: 3,
   },
@@ -51,7 +51,6 @@ export default function Testimonials() {
         <h2 className="text-3xl font-bold mb-6">Lo que dicen los jugadores</h2>
 
         <div className="relative bg-gray-700 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-          {/* Encabezado: Avatar y Nombre */}
           <div className="flex items-center mb-4">
             <Image
               src={testimonios[currentIndex].avatar}
@@ -63,17 +62,14 @@ export default function Testimonials() {
             <h4 className="text-lg font-bold">{testimonios[currentIndex].nombre}</h4>
           </div>
 
-          {/* Estrellas en el centro superior */}
           <div className="flex justify-center mb-4 text-yellow-400">
             {Array.from({ length: 5 }).map((_, i) => (
               <FaStar key={i} size={22} className={i < testimonios[currentIndex].estrellas ? "text-yellow-400" : "text-gray-500"} />
             ))}
           </div>
 
-          {/* Comentario del testimonio */}
           <p className="text-lg italic text-gray-300 text-center">&quot;{testimonios[currentIndex].comentario}</p>
 
-          {/* Controles para cambiar de testimonio */}
           <div className="flex justify-between mt-4">
             <button
               onClick={prevTestimonial}

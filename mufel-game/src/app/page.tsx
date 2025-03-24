@@ -7,8 +7,15 @@ import Events from "../../components/ui/page/Events";
 import Shop from "../../components/ui/page/Shop";
 import Testimonials from "../../components/ui/page/Testimonials";
 import Footer from "../../components/ui/Footer";
+import { redirect } from "next/navigation";
+import { supabase } from "../../lib/supabaseClient";
 
-export default function Home() {
+export default async function Home() {
+  const { data } = await supabase.auth.getUser();
+
+  if (data.user) {
+    redirect("/download");
+  }
   return (
     <div>
       <Hero />

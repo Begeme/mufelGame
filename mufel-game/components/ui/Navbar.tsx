@@ -6,6 +6,7 @@ import { Button } from "./Button";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { t } = useTranslation();
@@ -13,16 +14,19 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Mapea los idiomas disponibles
   const languages = {
     es: "Español",
     en: "English",
   };
 
-  // Maneja el cierre del desplegable al hacer clic fuera
+  const router = useRouter();
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     }
@@ -48,22 +52,28 @@ export default function Navbar() {
 
         {/* Menú en escritorio */}
         <div className="hidden md:flex space-x-6">
-          <Link href="/game" className="hover:text-yellow-400">{t("navbar.game")}</Link>
-          <Link href="/tracker" className="hover:text-yellow-400">{t("navbar.tracker")}</Link>
-          <Link href="/news" className="hover:text-yellow-400">{t("navbar.news")}</Link>
-          <Link href="/merch" className="hover:text-yellow-400">{t("navbar.merch")}</Link>
+          <Link href="/game" className="hover:text-yellow-400">
+            {t("navbar.game")}
+          </Link>
+          <Link href="/tracker" className="hover:text-yellow-400">
+            {t("navbar.tracker")}
+          </Link>
+          <Link href="/news" className="hover:text-yellow-400">
+            {t("navbar.news")}
+          </Link>
+          <Link href="/merch" className="hover:text-yellow-400">
+            {t("navbar.merch")}
+          </Link>
         </div>
 
-        {/* Selector de idioma y botón Registrarse */}
         <div className="hidden md:flex items-center space-x-4 relative">
-          {/* Botón para abrir el desplegable de idiomas */}
           <div ref={dropdownRef} className="relative">
             <button
               className="flex items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               <FiGlobe size={20} className="mr-2" />
-              {languages[i18n.language as keyof typeof languages]} {/* Muestra el idioma seleccionado */}
+              {languages[i18n.language as keyof typeof languages]}
             </button>
 
             {/* Desplegable de idiomas */}
@@ -88,9 +98,14 @@ export default function Navbar() {
           </div>
 
           {/* Botón de Registro */}
-          <Link href="/auth">
-            <Button>{t("navbar.signup")}</Button>
-          </Link>
+
+          <Button
+            onClick={() =>
+              router.push("/register")
+            }
+          >
+            {t("navbar.signup")}
+          </Button>
         </div>
 
         {/* Menú hamburguesa en móvil */}

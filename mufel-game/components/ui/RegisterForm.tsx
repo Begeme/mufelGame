@@ -15,14 +15,21 @@ export default function RegisterForm() {
     setSuccess(false);
 
     try {
-      // 1. Registrar usuario en auth
-      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+      // Registro en Auth con metadata
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username }, // metadata guardado en Auth
+        },
+      });
+
       if (signUpError) throw new Error(signUpError.message);
       if (!data.user) throw new Error("No se pudo registrar el usuario.");
 
       const userId = data.user.id;
 
-      // 2. Insertar en tabla personalizada 'users'
+      // Insert en tabla personalizada
       const { error: insertError } = await supabase.from("users").insert([
         {
           id: userId,
@@ -33,7 +40,6 @@ export default function RegisterForm() {
 
       if (insertError) throw new Error("Error al guardar en la base de datos.");
 
-      // 3. Mostrar en consola
       console.clear();
       console.log("✅ Usuario registrado:");
       console.log("📧 Email:", email);
@@ -52,11 +58,15 @@ export default function RegisterForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-700">
-        <h2 className="text-3xl font-bold text-center text-white mb-6">Crear cuenta</h2>
+        <h2 className="text-3xl font-bold text-center text-white mb-6">
+          Crear cuenta
+        </h2>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         {success && (
-          <p className="text-green-400 text-center mb-4">🎉 Registro exitoso, revisa la consola</p>
+          <p className="text-green-400 text-center mb-4">
+            🎉 Registro exitoso, revisa la consola
+          </p>
         )}
 
         <form onSubmit={handleRegister} className="space-y-5">
@@ -89,7 +99,9 @@ export default function RegisterForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">
+              Contraseña
+            </label>
             <input
               type="password"
               placeholder="••••••••"
@@ -107,6 +119,25 @@ export default function RegisterForm() {
             Registrarse
           </button>
         </form>
+        <p className="text-center text-gray-400 mt-4">
+          ¿Ya tienes cuenta?{" "}
+          <a
+            href="/login"
+            className="text-yellow-400 hover:text-yellow-300 font-medium"
+          >
+            Inicia sesión
+          </a>
+        </p>
+        {success && (
+          <div className="text-green-400 text-center mb-4">
+            ✅ Registro exitoso. Por favor confirma tu email antes de iniciar
+            sesión.
+            <br />
+            <span className="text-sm text-gray-400">
+              Revisa tu bandeja de entrada o spam 📩
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,14 @@
 "use client";
+import React from "react";
 
-export function Button({ children, onClick, className }: { children: React.ReactNode; onClick?: () => void; className?: string }) {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  className?: string;
+};
+
+export function Button({ children, className = "", ...props }: ButtonProps) {
   return (
     <button
-      onClick={onClick}
+      {...props}
       className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform hover:scale-105 ${className}`}
       style={{
         backgroundColor: "#FACC15",

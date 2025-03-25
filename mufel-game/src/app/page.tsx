@@ -1,3 +1,7 @@
+"use client";
+
+import { useUser } from "../../context/UserContext";
+
 import Hero from "../../components/ui/page/Hero";
 import News from "../../components/ui/page/News";
 import Stats from "../../components/ui/page/Stats";
@@ -7,15 +11,13 @@ import Events from "../../components/ui/page/Events";
 import Shop from "../../components/ui/page/Shop";
 import Testimonials from "../../components/ui/page/Testimonials";
 import Footer from "../../components/ui/Footer";
-import { redirect } from "next/navigation";
-import { supabase } from "../../lib/supabaseClient";
 
-export default async function Home() {
-  const { data } = await supabase.auth.getUser();
+export default function Home() {
+  const context = useUser();
 
-  if (data.user) {
-    redirect("/download");
-  }
+  // Mientras redirige o espera el usuario
+  if (context === "loading") return null;
+
   return (
     <div>
       <Hero />

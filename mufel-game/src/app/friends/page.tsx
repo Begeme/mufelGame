@@ -4,7 +4,7 @@ import { supabase } from "../../../lib/supabaseClient";
 import { useUser } from "../../../context/UserContext";
 import { Button } from "../../../components/ui/Button";
 import { useRouter } from "next/navigation";
-import ChatModal from "../../../components/chat/ChatModal";
+import { useChat } from "../../../context/ChatLayout";
 
 // Tipos
 interface UserBasic {
@@ -24,12 +24,14 @@ export default function FriendsPage() {
   const user = context !== "loading" ? context.user : null;
   const router = useRouter();
 
+  const { openChat, unreadMessages } = useChat();
+
   const [friends, setFriends] = useState<UserBasic[]>([]);
   const [pendingReceived, setPendingReceived] = useState<PendingRequest[]>([]);
   const [pendingSent, setPendingSent] = useState<PendingRequest[]>([]);
   const [searchResults, setSearchResults] = useState<UserBasic[]>([]);
   const [search, setSearch] = useState("");
-  const [activeChat, setActiveChat] = useState<UserBasic | null>(null);
+
 
   useEffect(() => {
     if (user) fetchFriends();
@@ -44,9 +46,10 @@ export default function FriendsPage() {
       .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
       .eq("status", "accepted");
 
-    const friendIds = friendships?.map((f) =>
-      f.user_id === user.id ? f.friend_id : f.user_id
-    ) ?? [];
+    const friendIds =
+      friendships?.map((f) =>
+        f.user_id === user.id ? f.friend_id : f.user_id
+      ) ?? [];
 
     const { data: friendsData } = await supabase
       .from("users")
@@ -85,7 +88,10 @@ export default function FriendsPage() {
   };
 
   const handleAccept = async (id: number) => {
-    await supabase.from("friendships").update({ status: "accepted" }).eq("id", id);
+    await supabase
+      .from("friendships")
+      .update({ status: "accepted" })
+      .eq("id", id);
     fetchFriends();
   };
 
@@ -106,10 +112,14 @@ export default function FriendsPage() {
       const isSelf = u.id === user.id;
       const isFriend = friends.some((f) => f.id === u.id);
       const alreadySent = pendingSent.some(
-        (p) => p.friend_id.username === u.username || p.user_id.username === u.username
+        (p) =>
+          p.friend_id.username === u.username ||
+          p.user_id.username === u.username
       );
       const alreadyReceived = pendingReceived.some(
-        (p) => p.friend_id.username === u.username || p.user_id.username === u.username
+        (p) =>
+          p.friend_id.username === u.username ||
+          p.user_id.username === u.username
       );
       return !isSelf && !isFriend && !alreadySent && !alreadyReceived;
     });
@@ -150,11 +160,21 @@ export default function FriendsPage() {
                 key={f.id}
                 className="bg-gray-800 p-4 rounded-xl shadow flex justify-between items-center hover:bg-gray-700 transition cursor-pointer"
               >
-                <div onClick={() => router.push(`/profile/${f.id}`)} className="flex flex-col">
+                <div
+                  onClick={() => router.push(`/profile/${f.id}`)}
+                  className="flex flex-col"
+                >
                   <span className="text-lg font-semibold">{f.username}</span>
                   <span className="text-xs text-green-400">● Online</span>
                 </div>
-                <Button onClick={() => setActiveChat(f)}>Chat</Button>
+                <Button
+                  onClick={() => openChat({ id: f.id, username: f.username })}
+                >
+                  Chat{" "}
+                  {unreadMessages[f.id] > 0 && (
+                    <span>({unreadMessages[f.id]})</span>
+                  )}
+                </Button>
               </div>
             ))}
           </div>
@@ -168,11 +188,19 @@ export default function FriendsPage() {
         ) : (
           <div className="grid gap-4">
             {pendingReceived.map((p) => (
-              <div key={p.id} className="bg-gray-800 p-4 rounded-xl shadow flex justify-between items-center">
-                <span className="text-lg font-medium">{p.user_id.username}</span>
+              <div
+                key={p.id}
+                className="bg-gray-800 p-4 rounded-xl shadow flex justify-between items-center"
+              >
+                <span className="text-lg font-medium">
+                  {p.user_id.username}
+                </span>
                 <div className="flex gap-2">
                   <Button onClick={() => handleAccept(p.id)}>Aceptar</Button>
-                  <Button onClick={() => handleReject(p.id)} className="bg-red-600 hover:bg-red-700">
+                  <Button
+                    onClick={() => handleReject(p.id)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
                     Rechazar
                   </Button>
                 </div>
@@ -190,7 +218,10 @@ export default function FriendsPage() {
           <ul className="space-y-2">
             {pendingSent.map((p) => (
               <li key={p.id} className="bg-gray-800 p-3 rounded-xl shadow">
-                {p.friend_id.username} <span className="text-yellow-400 text-sm ml-2">(pendiente)</span>
+                {p.friend_id.username}{" "}
+                <span className="text-yellow-400 text-sm ml-2">
+                  (pendiente)
+                </span>
               </li>
             ))}
           </ul>
@@ -224,8 +255,6 @@ export default function FriendsPage() {
           </ul>
         )}
       </section>
-
-      {activeChat && <ChatModal user={activeChat} onClose={() => setActiveChat(null)} />}
     </div>
   );
 }

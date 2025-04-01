@@ -12,12 +12,13 @@ export default function ChatPanel() {
     openChat,
     unreadMessages,
     resetUnread,
-    openChats
+    openChats,
+    friends,
+    closeChat,
   } = useChat();
 
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
-  const [friends, setFriends] = useState<{ id: string; username: string }[]>([]);
   const [typingStatus, setTypingStatus] = useState<string | null>(null);
 
   const activeUser = openChats.find((u) => u.id === activeUserId) || null;
@@ -41,41 +42,6 @@ export default function ChatPanel() {
 
     markMessagesAsRead();
   }, [activeUserId, currentUser, resetUnread]);
-
-  useEffect(() => {
-    const fetchFriends = async () => {
-      if (!currentUser) return;
-
-      const { data: friendships, error } = await supabase
-        .from("friendships")
-        .select("*")
-        .or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`)
-        .eq("status", "accepted");
-
-      if (error) {
-        console.error("Error al cargar friendships:", error);
-        return;
-      }
-
-      const friendIds = friendships?.map((f) =>
-        f.user_id === currentUser.id ? f.friend_id : f.user_id
-      ) ?? [];
-
-      const { data: friendsData, error: usersError } = await supabase
-        .from("users")
-        .select("id, username")
-        .in("id", friendIds);
-
-      if (usersError) {
-        console.error("Error al cargar usuarios:", usersError);
-        return;
-      }
-
-      setFriends(friendsData || []);
-    };
-
-    fetchFriends();
-  }, [currentUser]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -108,7 +74,7 @@ export default function ChatPanel() {
             onClick={() => setIsFriendsOpen(true)}
             className="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded shadow"
           >
-            Amigos
+            Chats
           </button>
         </div>
       )}
@@ -116,7 +82,7 @@ export default function ChatPanel() {
       {isFriendsOpen && (
         <div className="fixed bottom-4 right-4 w-[280px] max-h-[500px] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl flex flex-col z-50">
           <div className="p-3 border-b border-gray-700 flex justify-between items-center">
-            <span className="font-semibold text-white">Amigos</span>
+            <span className="font-semibold text-white">💬 Chats</span>
             <button
               onClick={() => setIsFriendsOpen(false)}
               className="text-sm text-gray-400 hover:text-red-400"
@@ -143,7 +109,9 @@ export default function ChatPanel() {
               </div>
             ))}
             {friends.length === 0 && (
-              <div className="text-sm text-gray-400 text-center mt-4">No tienes amigos aún</div>
+              <div className="text-sm text-gray-400 text-center mt-4">
+                No tienes amigos aún
+              </div>
             )}
           </div>
         </div>
@@ -159,7 +127,10 @@ export default function ChatPanel() {
               )}
             </div>
             <button
-              onClick={() => setActiveUserId(null)}
+              onClick={() => {
+                setActiveUserId(null);
+                closeChat(activeUser.id);
+              }}
               className="text-sm text-gray-400 hover:text-red-400"
             >
               ✕

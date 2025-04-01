@@ -24,10 +24,7 @@ export default function ChatModal({ user }: ChatModalProps) {
   const context = useUser();
   const currentUser = context !== "loading" ? context.user : null;
 
-  const {
-    incrementUnread,
-    resetUnread,
-  } = useChat();
+  const { incrementUnread, resetUnread } = useChat();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -67,7 +64,10 @@ export default function ChatModal({ user }: ChatModalProps) {
           payload.payload.receiver === currentUser?.id
         ) {
           setShowTypingDots(true);
-          setTimeout(() => setShowTypingDots(false), 3000);
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = setTimeout(() => {
+            setShowTypingDots(false);
+          }, 3000);
         }
       })
       .subscribe();
@@ -128,7 +128,7 @@ export default function ChatModal({ user }: ChatModalProps) {
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     emitTyping();
     typingTimeoutRef.current = setTimeout(() => {
-      typingTimeoutRef.current = null;
+      setShowTypingDots(false);
     }, 3000);
   };
 
@@ -154,6 +154,7 @@ export default function ChatModal({ user }: ChatModalProps) {
         },
       ]);
       setNewMessage("");
+      setShowTypingDots(false);
     }
   };
 

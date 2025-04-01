@@ -1,8 +1,10 @@
-// src/app/layout.tsx
+"use client";
 import "./globals.css";
 import { UserProvider } from "../../context/UserContext";
 import Navbar from "../../components/ui/Navbar";
 import { ChatProvider } from "../../context/ChatLayout";
+import OnlineStatusUpdater from "../../components/ui/OnlineStatusUpdater";
+
 
 export default function RootLayout({
   children,
@@ -14,6 +16,7 @@ export default function RootLayout({
       <body>
         <UserProvider>
           <ChatProvider>
+            <OnlineStatusUpdater />
             <Navbar />
             <main>{children}</main>
           </ChatProvider>

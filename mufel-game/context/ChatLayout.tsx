@@ -16,6 +16,8 @@ interface ChatContextType {
   closeChat: (userId: string) => void;
   incrementUnread: (userId: string) => void;
   resetUnread: (userId: string) => void;
+  friends: UserInfo[];
+  refreshFriends: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -29,12 +31,46 @@ export function useChat() {
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [openChats, setOpenChats] = useState<UserInfo[]>([]);
   const [unreadMessages, setUnreadMessages] = useState<{ [userId: string]: number }>({});
+  const [friends, setFriends] = useState<UserInfo[]>([]);
 
   const context = useUser();
   const user = context !== "loading" ? context.user : null;
 
+  const refreshFriends = async () => {
+    if (!user) return;
+
+    const { data: friendships, error } = await supabase
+      .from("friendships")
+      .select("*")
+      .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+      .eq("status", "accepted");
+
+    if (error) {
+      console.error("Error al cargar friendships:", error);
+      return;
+    }
+
+    const friendIds = friendships?.map((f) =>
+      f.user_id === user.id ? f.friend_id : f.user_id
+    ) ?? [];
+
+    const { data: friendsData, error: usersError } = await supabase
+      .from("users")
+      .select("id, username")
+      .in("id", friendIds);
+
+    if (usersError) {
+      console.error("Error al cargar usuarios:", usersError);
+      return;
+    }
+
+    setFriends(friendsData || []);
+  };
+
   useEffect(() => {
     if (!user) return;
+
+    refreshFriends();
 
     const loadUnreadMessages = async () => {
       const { data: unreadData, error } = await supabase
@@ -115,6 +151,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         closeChat,
         incrementUnread,
         resetUnread,
+        friends,
+        refreshFriends,
       }}
     >
       {children}

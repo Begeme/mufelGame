@@ -58,7 +58,6 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-bold mb-8 text-center">👤 Mi Perfil</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-          {/* Card de perfil */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-md text-center space-y-4">
             <Image
               src="/img/logo-mufel.jpeg"
@@ -75,7 +74,6 @@ export default function ProfilePage() {
             <p><strong>Plataformas:</strong> {stats.played.plataformas} partidas</p>
           </div>
 
-          {/* Últimas partidas */}
           <div className="md:col-span-2 bg-gray-800 rounded-xl p-6 shadow-md space-y-4">
             <h2 className="text-xl font-semibold mb-2">🕹️ Últimas partidas</h2>
             {latestMatches.map((match, idx) => (
@@ -98,7 +96,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Logros bloqueados */}
         <div className="max-w-5xl mx-auto mb-10">
           <h2 className="text-xl font-semibold mb-4 text-center">🏅 Logros</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

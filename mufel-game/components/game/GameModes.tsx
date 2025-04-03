@@ -41,7 +41,6 @@ export default function GameModes() {
     <section className="bg-gray-900 text-white py-20 flex flex-col items-center">
       <h2 className="text-4xl font-bold text-center mb-6">Modos de Juego</h2>
 
-      {/* Switch de Modos */}
       <div className="mt-4 flex items-center">
         <div
           className="relative w-48 h-12 bg-gray-700 rounded-full flex items-center cursor-pointer transition"
@@ -73,7 +72,6 @@ export default function GameModes() {
         </div>
       </div>
 
-      {/* Contenido del modo seleccionado */}
       <div className="mt-10 max-w-4xl bg-gray-800 p-8 rounded-lg shadow-lg text-center">
         <h3 className="text-3xl font-bold flex items-center justify-center gap-2">
           {isPlataformas ? <FaGamepad /> : <FaDungeon />} 
@@ -83,7 +81,6 @@ export default function GameModes() {
           {gameModes[selectedMode].description}
         </p>
 
-        {/* Historia */}
         <div className="mt-6 bg-gray-700 p-4 rounded-lg">
           <h4 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2">
             <MdOutlineCategory /> Historia
@@ -91,7 +88,6 @@ export default function GameModes() {
           <p className="text-gray-300 mt-2">{gameModes[selectedMode].history}</p>
         </div>
 
-        {/* Características */}
         <div className="mt-6 bg-gray-700 p-4 rounded-lg">
           <h4 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2">
             ⭐ Características

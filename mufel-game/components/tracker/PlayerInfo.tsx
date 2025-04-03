@@ -10,7 +10,6 @@ interface Player {
 export default function PlayerInfo({ player }: { player: Player }) {
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center text-white">
-      {/* ✅ Se agregan width y height obligatorios */}
       <Image 
         src={player.avatar} 
         alt="Avatar del jugador" 

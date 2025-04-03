@@ -32,7 +32,6 @@ export default function PrivacySettings() {
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-0 shadow-md overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-3">
-        {/* Info izquierda */}
         <div className="bg-gray-950 px-6 py-8 border-r border-gray-800">
           <h3 className="text-xl font-bold text-white mb-2">Privacidad</h3>
           <p className="text-sm text-gray-400">
@@ -40,9 +39,7 @@ export default function PrivacySettings() {
           </p>
         </div>
 
-        {/* Contenido editable */}
         <div className="md:col-span-2 p-6 space-y-6">
-          {/* Perfil público */}
           <div className="flex items-center justify-between">
             <div>
               <h4 className="text-sm font-medium text-white">Perfil público</h4>
@@ -58,7 +55,6 @@ export default function PrivacySettings() {
             />
           </div>
 
-          {/* Botón guardar */}
           <div className="pt-4">
             <button
               onClick={handleSaveChanges}

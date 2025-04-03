@@ -43,8 +43,6 @@ export default function DownloadPage() {
           downloadLink="/downloads/mufelgame-mac.dmg"
           icon="/img/logo-sin-fondo.png"
         />
-        {/* Si no tienes builds aún, puedes poner coming soon */}
-        {/* <DownloadCard platform="Linux" description="Próximamente..." downloadLink="#" icon="/img/linux.png" /> */}
       </div>
     </main>
   );

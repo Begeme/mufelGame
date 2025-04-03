@@ -1,10 +1,12 @@
 "use client";
+
 import "./globals.css";
 import { UserProvider } from "../../context/UserContext";
 import Navbar from "../../components/ui/Navbar";
 import { ChatProvider } from "../../context/ChatLayout";
 import OnlineStatusUpdater from "../../components/ui/OnlineStatusUpdater";
-
+import { NotificationProvider } from "../../context/NotificationContext";
+import CustomToaster from "../../components/ui/CustomToaster";
 
 export default function RootLayout({
   children,
@@ -15,11 +17,14 @@ export default function RootLayout({
     <html lang="es">
       <body>
         <UserProvider>
-          <ChatProvider>
-            <OnlineStatusUpdater />
-            <Navbar />
-            <main>{children}</main>
-          </ChatProvider>
+          <NotificationProvider>
+            <ChatProvider>
+              <OnlineStatusUpdater />
+              <Navbar />
+              <main>{children}</main>
+              <CustomToaster />
+            </ChatProvider>
+          </NotificationProvider>
         </UserProvider>
       </body>
     </html>

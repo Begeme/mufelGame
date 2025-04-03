@@ -22,7 +22,6 @@ export default function Media() {
           Descubre imágenes y videos de MufelGame en acción. Sumérgete en su mundo y prepárate para la batalla.
         </p>
 
-        {/* 📸 Galería de Imágenes */}
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6">
           {images.map((src, index) => (
             <div key={index} className="relative w-full h-40 md:h-48 overflow-hidden rounded-lg shadow-lg">
@@ -37,7 +36,6 @@ export default function Media() {
           ))}
         </div>
 
-        {/* 🎥 Sección de Videos */}
         <div className="mt-16">
           <h3 className="text-3xl font-bold text-yellow-500">Videos Destacados</h3>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8">

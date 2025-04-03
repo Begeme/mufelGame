@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useUser } from "./UserContext";
 import { supabase } from "../lib/supabaseClient";
+import { playChatSound } from "../lib/playSound";
 import ChatPanel from "./ChatPanel";
 
 export interface UserInfo {
@@ -36,10 +37,9 @@ export function useChat() {
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [openChats, setOpenChats] = useState<UserInfo[]>([]);
-  const [unreadMessages, setUnreadMessages] = useState<{
-    [userId: string]: number;
-  }>({});
+  const [unreadMessages, setUnreadMessages] = useState<{ [userId: string]: number }>({});
   const [friends, setFriends] = useState<UserInfo[]>([]);
+  const [soundNotifications, setSoundNotifications] = useState(true);
 
   const context = useUser();
   const user = context !== "loading" ? context.user : null;
@@ -58,10 +58,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const friendIds =
-      friendships?.map((f) =>
-        f.user_id === user.id ? f.friend_id : f.user_id
-      ) ?? [];
+    const friendIds = friendships?.map((f) => f.user_id === user.id ? f.friend_id : f.user_id) ?? [];
 
     const { data: friendsData, error: usersError } = await supabase
       .from("users")
@@ -127,6 +124,38 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     loadUnreadMessages();
   }, [user, refreshFriends]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("soundNotifications");
+    if (stored !== null) {
+      setSoundNotifications(stored === "true");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel("realtime:public:messages")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          const msg = payload.new;
+          const incomingToMe = msg.receiver_id === user.id && msg.sender_id !== user.id;
+
+          if (incomingToMe) {
+            incrementUnread(msg.sender_id);
+            if (soundNotifications) playChatSound();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, soundNotifications]);
 
   const openChat = (user: UserInfo) => {
     setOpenChats((prev) => {

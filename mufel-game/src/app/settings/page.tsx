@@ -62,7 +62,6 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white pt-20">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Sticky mobile selector */}
         <div className="block md:hidden sticky top-16 z-30 bg-gray-950 py-3">
           <div className="relative">
             <select
@@ -81,7 +80,6 @@ export default function SettingsPage() {
               ))}
             </select>
 
-            {/* Flecha personalizada */}
             <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
               <svg
                 className={`h-4 w-4 transition-transform duration-200 ${
@@ -102,7 +100,6 @@ export default function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 py-10">
-          {/* Sidebar for desktop */}
           <aside className="hidden md:block space-y-4 sticky top-24 self-start">
             {sections.map((s) => (
               <button
@@ -121,7 +118,6 @@ export default function SettingsPage() {
             ))}
           </aside>
 
-          {/* Main content */}
           <section className="space-y-24 pb-20">
             <div id="profile" className="space-y-4 scroll-mt-32">
               <h2 className="text-xl font-semibold">Perfil</h2>

@@ -82,7 +82,6 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full bg-black bg-opacity-95 backdrop-blur-sm text-white z-50 shadow-sm">
       <div className="container mx-auto flex justify-between items-center h-14 px-4">
-        {/* Logo */}
         <Link href="/">
           <Image
             src="/img/logo-sin-fondo.png"
@@ -93,7 +92,6 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Menú principal - Desktop */}
         <div className="hidden md:flex flex-1 justify-center space-x-6 items-center text-sm font-semibold tracking-wide uppercase">
           <Link href="/game" className="hover:text-yellow-400">
             {t("navbar.game")}
@@ -109,9 +107,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Idioma + Usuario - Desktop */}
         <div className="hidden md:flex items-center space-x-3 text-sm">
-          {/* Selector de idioma */}
           <div className="relative" ref={langRefDesktop}>
             <button
               onClick={() => setLangDropdown(!langDropdown)}
@@ -143,7 +139,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Usuario o botón de registro */}
           {user ? (
             <div ref={userRef} className="relative">
               <button
@@ -151,7 +146,7 @@ export default function Navbar() {
                 className="px-3 py-1 bg-gray-800 hover:bg-gray-700 transition font-semibold flex items-center gap-1"
               >
                 {user.username}
-                <span className="text-xs">▼</span>
+                <span className="text-xs">{userDropdown ? "▲" : "▼"}</span>
               </button>
               {userDropdown && (
                 <motion.div
@@ -162,30 +157,37 @@ export default function Navbar() {
                 >
                   <Link
                     href="/download"
+                    onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
                     Descargar
                   </Link>
                   <Link
                     href="/friends"
+                    onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
                     Amigos
                   </Link>
                   <Link
                     href="/profile"
+                    onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
                     Mi Perfil
                   </Link>
                   <Link
                     href="/settings"
+                    onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
                     Configuración
                   </Link>
                   <button
-                    onClick={handleLogout}
+                    onClick={() => {
+                      setUserDropdown(false);
+                      handleLogout();
+                    }}
                     className="w-full text-left px-4 py-2 hover:bg-gray-700"
                   >
                     Cerrar sesión
@@ -203,7 +205,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Selector de idioma - Móvil */}
         <div className="md:hidden relative" ref={langRefMobile}>
           <button
             className="ml-2 flex items-center text-xs px-2 py-1 bg-gray-800 hover:bg-gray-700"
@@ -235,16 +236,13 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Menú hamburguesa - Móvil */}
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
         </button>
       </div>
 
-      {/* Menú desplegable - Móvil */}
       {menuOpen && (
         <div className="md:hidden bg-black bg-opacity-95 p-4 space-y-2 text-left text-sm">
-          {/* Menú principal */}
           {[
             { href: "/game", label: t("navbar.game") },
             { href: "/tracker", label: t("navbar.tracker") },
@@ -261,7 +259,6 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Usuario logueado con dropdown */}
           {user ? (
             <div className="mt-4" ref={userMobileRef}>
               <button
@@ -274,7 +271,6 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* Dropdown: visible si userDropdownMobile === true */}
               <div
                 className={`transition-all duration-200 overflow-hidden ${
                   userDropdownMobile
@@ -311,7 +307,7 @@ export default function Navbar() {
                     }}
                     className="block px-4 py-3 hover:bg-gray-700"
                   >
-                   Mi Perfil
+                    Mi Perfil
                   </Link>
                   <Link
                     href="/settings"

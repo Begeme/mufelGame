@@ -34,16 +34,13 @@ export default function HowToPlay() {
 
   return (
     <section className="bg-gray-800 text-white py-20 min-h-screen flex flex-col items-center">
-      {/* Título */}
       <h2 className="text-4xl font-bold text-center">Cómo Jugar</h2>
 
-      {/* Switch para cambiar de modo */}
       <div className="mt-6 flex items-center">
         <div
           className="relative w-52 h-12 bg-gray-700 rounded-full flex items-center cursor-pointer transition"
           onClick={() => setIsPlataformas(!isPlataformas)}
         >
-          {/* Texto de Plataformas con Padding */}
           <span
             className={`w-1/2 text-center text-sm font-bold transition-all px-4 ${
               isPlataformas ? "text-black" : "text-gray-300"
@@ -52,7 +49,6 @@ export default function HowToPlay() {
             Plataformas
           </span>
 
-          {/* Botón deslizante */}
           <span
             className={`absolute w-1/2 h-full rounded-full bg-yellow-500 flex items-center justify-center font-bold text-black transition-all ${
               isPlataformas ? "left-0" : "left-1/2"
@@ -61,7 +57,6 @@ export default function HowToPlay() {
             {isPlataformas ? "Plataformas" : "Roguelike"}
           </span>
 
-          {/* Texto de Roguelike con Padding */}
           <span
             className={`w-1/2 text-center text-sm font-bold transition-all px-4 ${
               isPlataformas ? "text-gray-300" : "text-black"
@@ -72,12 +67,9 @@ export default function HowToPlay() {
         </div>
       </div>
 
-      {/* Contenedor principal con separación más equilibrada */}
       <div className="mt-10 w-full max-w-6xl flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-16">
         
-        {/* Controles a la izquierda */}
         <div className="w-full md:w-1/2 flex flex-col items-center">
-          {/* Botones de Secciones en Horizontal */}
           <div className="flex space-x-4">
             {["movement", "combat", "objective"].map((key) => (
               <button 
@@ -92,14 +84,12 @@ export default function HowToPlay() {
             ))}
           </div>
 
-          {/* Información dinámica debajo de los botones */}
           <div className="mt-6 bg-gray-700 p-6 rounded-lg text-center w-full">
             <h3 className="text-2xl font-bold">{gameModes[selectedMode].title}</h3>
             <p className="mt-2 text-lg">{gameModes[selectedMode][selectedSection]}</p>
           </div>
         </div>
 
-        {/* Video a la derecha más centrado y grande */}
         <div className="w-full md:w-1/2 flex justify-center">
           <video key={selectedSection + selectedMode} controls className="rounded-lg w-full max-w-xl">
             <source src={gameModes[selectedMode].videos[selectedSection]} type="video/mp4" />

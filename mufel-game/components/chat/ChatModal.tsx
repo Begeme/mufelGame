@@ -1,11 +1,14 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useUser } from "../../context/UserContext";
 import { useChat } from "../../context/ChatLayout";
+import { useNotification } from "../../context/NotificationContext";
 import { Button } from "../ui/Button";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import { v4 as uuidv4 } from "uuid";
 
 interface ChatModalProps {
   user: { id: string; username: string };
@@ -18,26 +21,51 @@ interface Message {
   receiver_id: string;
   content: string;
   created_at: string;
+  tempId?: string;
 }
 
 export default function ChatModal({ user }: ChatModalProps) {
   const context = useUser();
   const currentUser = context !== "loading" ? context.user : null;
-
-  const { incrementUnread, resetUnread } = useChat();
+  const { soundEnabled } = useNotification();
+  const { resetUnread } = useChat();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [showTypingDots, setShowTypingDots] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasInteracted = useRef(false);
+
+  useEffect(() => {
+    const markInteraction = () => {
+      hasInteracted.current = true;
+      document.removeEventListener("click", markInteraction);
+      document.removeEventListener("keydown", markInteraction);
+    };
+
+    document.addEventListener("click", markInteraction);
+    document.addEventListener("keydown", markInteraction);
+
+    return () => {
+      document.removeEventListener("click", markInteraction);
+      document.removeEventListener("keydown", markInteraction);
+    };
+  }, []);
+
+  const playNotificationSound = () => {
+    if (!soundEnabled || !hasInteracted.current) return;
+    const audio = new Audio("/sounds/notification.mp3");
+    audio.volume = 0.4;
+    audio.play().catch((e) => console.warn("Error al reproducir sonido:", e));
+  };
 
   useEffect(() => {
     if (!currentUser) return;
     fetchMessages();
 
     const messageChannel = supabase
-      .channel("realtime:public:messages")
+      .channel("chat-modal-messages")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
@@ -47,10 +75,28 @@ export default function ChatModal({ user }: ChatModalProps) {
             (msg.sender_id === currentUser.id && msg.receiver_id === user.id) ||
             (msg.sender_id === user.id && msg.receiver_id === currentUser.id)
           ) {
-            setMessages((prev) => [...prev, msg]);
+            setMessages((prev) => {
+              const index = prev.findIndex(
+                (m) =>
+                  m.sender_id === msg.sender_id &&
+                  m.receiver_id === msg.receiver_id &&
+                  m.content === msg.content &&
+                  Math.abs(new Date(m.created_at).getTime() - new Date(msg.created_at).getTime()) < 1000
+              );
 
-            const isFromFriend = msg.sender_id === user.id;
-            if (isFromFriend) incrementUnread(user.id);
+              if (index !== -1) {
+                const updated = [...prev];
+                updated[index] = msg;
+                return updated;
+              }
+
+              const exists = prev.some((m) => m.id === msg.id);
+              return exists ? prev : [...prev, msg];
+            });
+
+            if (msg.sender_id !== currentUser.id) {
+              playNotificationSound();
+            }
           }
         }
       )
@@ -76,23 +122,19 @@ export default function ChatModal({ user }: ChatModalProps) {
       supabase.removeChannel(messageChannel);
       supabase.removeChannel(typingChannel);
     };
-  }, [user.id, currentUser?.id]);
+  }, [user.id, currentUser?.id, soundEnabled]);
 
   useEffect(() => {
     if (!currentUser) return;
     resetUnread(user.id);
 
     const markAsRead = async () => {
-      const { error } = await supabase
+      await supabase
         .from("messages")
         .update({ read: true })
         .eq("sender_id", user.id)
         .eq("receiver_id", currentUser.id)
         .eq("read", false);
-
-      if (error) {
-        console.error("Error al marcar mensajes como leídos:", error);
-      }
     };
 
     markAsRead();
@@ -135,27 +177,26 @@ export default function ChatModal({ user }: ChatModalProps) {
   const handleSend = async () => {
     if (!newMessage.trim() || !currentUser) return;
 
-    const { error } = await supabase.from("messages").insert({
+    const tempId = uuidv4();
+    const tempMessage: Message = {
+      id: tempId,
+      sender_id: currentUser.id,
+      receiver_id: user.id,
+      content: newMessage,
+      created_at: new Date().toISOString(),
+      tempId,
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
+    setNewMessage("");
+    setShowTypingDots(false);
+
+    await supabase.from("messages").insert({
       sender_id: currentUser.id,
       receiver_id: user.id,
       content: newMessage,
       read: false,
     });
-
-    if (!error) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          sender_id: currentUser.id,
-          receiver_id: user.id,
-          content: newMessage,
-          created_at: new Date().toISOString(),
-        },
-      ]);
-      setNewMessage("");
-      setShowTypingDots(false);
-    }
   };
 
   useEffect(() => {
@@ -192,7 +233,7 @@ export default function ChatModal({ user }: ChatModalProps) {
             </div>
             {msgs.map((msg) => (
               <div
-                key={msg.id}
+                key={msg.tempId ?? msg.id}
                 className={`px-4 py-2 rounded-lg max-w-[85%] break-words text-sm shadow-sm relative ${
                   msg.sender_id === currentUser?.id
                     ? "bg-blue-600 text-white ml-auto"
@@ -208,13 +249,12 @@ export default function ChatModal({ user }: ChatModalProps) {
           </div>
         ))}
 
-        {/* Indicador de escribiendo animado */}
         {showTypingDots && (
           <div className="text-xs text-gray-400 italic ml-2 mb-2 animate-pulse">
-            {user.username} está escribiendo<span className="inline-block animate-bounce">...</span>
+            {user.username} está escribiendo
+            <span className="inline-block animate-bounce">...</span>
           </div>
         )}
-
         <div ref={bottomRef} />
       </div>
 

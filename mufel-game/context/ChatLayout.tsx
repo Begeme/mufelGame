@@ -1,5 +1,11 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { useUser } from "./UserContext";
 import { supabase } from "../lib/supabaseClient";
 import ChatPanel from "./ChatPanel";
@@ -30,13 +36,15 @@ export function useChat() {
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [openChats, setOpenChats] = useState<UserInfo[]>([]);
-  const [unreadMessages, setUnreadMessages] = useState<{ [userId: string]: number }>({});
+  const [unreadMessages, setUnreadMessages] = useState<{
+    [userId: string]: number;
+  }>({});
   const [friends, setFriends] = useState<UserInfo[]>([]);
 
   const context = useUser();
   const user = context !== "loading" ? context.user : null;
 
-  const refreshFriends = async () => {
+  const refreshFriends = useCallback(async () => {
     if (!user) return;
 
     const { data: friendships, error } = await supabase
@@ -50,9 +58,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const friendIds = friendships?.map((f) =>
-      f.user_id === user.id ? f.friend_id : f.user_id
-    ) ?? [];
+    const friendIds =
+      friendships?.map((f) =>
+        f.user_id === user.id ? f.friend_id : f.user_id
+      ) ?? [];
 
     const { data: friendsData, error: usersError } = await supabase
       .from("users")
@@ -65,7 +74,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
 
     setFriends(friendsData || []);
-  };
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -117,7 +126,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadUnreadMessages();
-  }, [user]);
+  }, [user, refreshFriends]);
 
   const openChat = (user: UserInfo) => {
     setOpenChats((prev) => {

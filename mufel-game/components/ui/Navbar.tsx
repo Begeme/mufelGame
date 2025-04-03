@@ -173,6 +173,12 @@ export default function Navbar() {
                     Amigos
                   </Link>
                   <Link
+                    href="/profile"
+                    className="block px-4 py-2 hover:bg-gray-700"
+                  >
+                    Mi Perfil
+                  </Link>
+                  <Link
                     href="/settings"
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
@@ -296,6 +302,16 @@ export default function Navbar() {
                     className="block px-4 py-3 hover:bg-gray-700"
                   >
                     Amigos
+                  </Link>
+                  <Link
+                    href="/profile"
+                    onClick={() => {
+                      setUserDropdownMobile(false);
+                      setMenuOpen(false);
+                    }}
+                    className="block px-4 py-3 hover:bg-gray-700"
+                  >
+                   Mi Perfil
                   </Link>
                   <Link
                     href="/settings"

@@ -6,6 +6,7 @@ type UserData = {
   id: string;
   username: string;
   email: string;
+  is_public: boolean;
 };
 
 type UserContextType = {
@@ -31,7 +32,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     if (currentUser) {
       const { data: profile } = await supabase
         .from("users")
-        .select("id, username, email")
+        .select("id, username, email, is_public")
         .eq("id", currentUser.id)
         .single();
 

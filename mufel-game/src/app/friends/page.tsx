@@ -4,6 +4,7 @@ import { supabase } from "../../../lib/supabaseClient";
 import { useUser } from "../../../context/UserContext";
 import { Button } from "../../../components/ui/Button";
 import { useChat } from "../../../context/ChatLayout";
+import { useCallback } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 interface UserBasic {
@@ -32,40 +33,7 @@ export default function FriendsPage() {
   const [showOffline, setShowOffline] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      fetchFriends();
-      if (!channelRef.current) {
-        channelRef.current = supabase
-          .channel("online-users")
-          .on(
-            "postgres_changes",
-            {
-              event: "UPDATE",
-              schema: "public",
-              table: "users",
-            },
-            (payload) => {
-              const updatedUser = payload.new as UserBasic;
-              setFriends((prev) =>
-                prev.map((f) =>
-                  f.id === updatedUser.id
-                    ? { ...f, is_online: updatedUser.is_online }
-                    : f
-                )
-              );
-            }
-          )
-          .subscribe();
-      }
-    }
-
-    return () => {
-      channelRef.current?.unsubscribe();
-    };
-  }, [user]);
-
-  const fetchFriends = async () => {
+  const fetchFriends = useCallback(async () => {
     if (!user) return;
 
     const { data: friendships } = await supabase
@@ -115,7 +83,40 @@ export default function FriendsPage() {
         friend_id: Array.isArray(s.friend_id) ? s.friend_id[0] : s.friend_id,
       }))
     );
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchFriends();
+      if (!channelRef.current) {
+        channelRef.current = supabase
+          .channel("online-users")
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "users",
+            },
+            (payload) => {
+              const updatedUser = payload.new as UserBasic;
+              setFriends((prev) =>
+                prev.map((f) =>
+                  f.id === updatedUser.id
+                    ? { ...f, is_online: updatedUser.is_online }
+                    : f
+                )
+              );
+            }
+          )
+          .subscribe();
+      }
+    }
+
+    return () => {
+      channelRef.current?.unsubscribe();
+    };
+  }, [user, fetchFriends]);
 
   const handleAccept = async (id: number) => {
     await supabase
@@ -232,7 +233,10 @@ export default function FriendsPage() {
         />
         <div className="space-y-3">
           <div>
-            <button onClick={() => setShowOnline((prev) => !prev)} className="text-left text-yellow-400 font-semibold mb-1">
+            <button
+              onClick={() => setShowOnline((prev) => !prev)}
+              className="text-left text-yellow-400 font-semibold mb-1"
+            >
               {showOnline ? "▼" : "▶"} Amigos en línea
             </button>
             {showOnline && (
@@ -244,12 +248,16 @@ export default function FriendsPage() {
                     onClick={() => openChat(f)}
                   >
                     <div className="flex flex-col">
-                      <span className="text-lg font-semibold">{f.username}</span>
+                      <span className="text-lg font-semibold">
+                        {f.username}
+                      </span>
                       <span className="text-xs text-green-400">● Online</span>
                     </div>
                     {unreadMessages[f.id] > 0 && (
                       <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                        {unreadMessages[f.id] > 99 ? "99+" : unreadMessages[f.id]}
+                        {unreadMessages[f.id] > 99
+                          ? "99+"
+                          : unreadMessages[f.id]}
                       </span>
                     )}
                   </div>
@@ -259,7 +267,10 @@ export default function FriendsPage() {
           </div>
 
           <div>
-            <button onClick={() => setShowOffline((prev) => !prev)} className="text-left text-yellow-400 font-semibold mb-1">
+            <button
+              onClick={() => setShowOffline((prev) => !prev)}
+              className="text-left text-yellow-400 font-semibold mb-1"
+            >
               {showOffline ? "▼" : "▶"} Amigos desconectados
             </button>
             {showOffline && (
@@ -271,12 +282,16 @@ export default function FriendsPage() {
                     onClick={() => openChat(f)}
                   >
                     <div className="flex flex-col">
-                      <span className="text-lg font-semibold">{f.username}</span>
+                      <span className="text-lg font-semibold">
+                        {f.username}
+                      </span>
                       <span className="text-xs text-gray-400">● Offline</span>
                     </div>
                     {unreadMessages[f.id] > 0 && (
                       <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                        {unreadMessages[f.id] > 99 ? "99+" : unreadMessages[f.id]}
+                        {unreadMessages[f.id] > 99
+                          ? "99+"
+                          : unreadMessages[f.id]}
                       </span>
                     )}
                   </div>
@@ -303,8 +318,13 @@ export default function FriendsPage() {
                   >
                     <span>{p.user_id.username}</span>
                     <div className="flex gap-2">
-                      <Button onClick={() => handleAccept(p.id)}>Aceptar</Button>
-                      <Button onClick={() => handleReject(p.id)} className="bg-red-600 hover:bg-red-700">
+                      <Button onClick={() => handleAccept(p.id)}>
+                        Aceptar
+                      </Button>
+                      <Button
+                        onClick={() => handleReject(p.id)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
                         Rechazar
                       </Button>
                     </div>
@@ -323,7 +343,9 @@ export default function FriendsPage() {
                 {pendingSent.map((p) => (
                   <li key={p.id} className="bg-gray-700 p-3 rounded-lg">
                     <span>{p.friend_id.username}</span>
-                    <span className="text-yellow-400 text-sm ml-2">(pendiente)</span>
+                    <span className="text-yellow-400 text-sm ml-2">
+                      (pendiente)
+                    </span>
                   </li>
                 ))}
               </ul>

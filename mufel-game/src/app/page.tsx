@@ -15,7 +15,6 @@ import Footer from "../../components/ui/Footer";
 export default function Home() {
   const context = useUser();
 
-  // Mientras redirige o espera el usuario
   if (context === "loading") return null;
 
   return (

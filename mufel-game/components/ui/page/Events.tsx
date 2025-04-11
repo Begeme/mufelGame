@@ -44,7 +44,7 @@ export default function Events() {
 
         <div className="flex justify-center space-x-6 mb-6">
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
               selectedType === "torneos"
                 ? "bg-yellow-500 text-black scale-105"
                 : "bg-gray-700 hover:bg-yellow-400"
@@ -55,7 +55,7 @@ export default function Events() {
           </button>
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
               selectedType === "eventos_vivos"
                 ? "bg-yellow-500 text-black scale-105"
                 : "bg-gray-700 hover:bg-yellow-400"
@@ -73,7 +73,7 @@ export default function Events() {
               <p className="text-yellow-400">{evento.fecha}</p>
               <p className="text-gray-300 mt-2">{evento.descripcion}</p>
               <p className="mt-2 font-semibold">🏆 {evento.premio}</p>
-              <button className="mt-4 bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition duration-300">
+              <button className="mt-4 bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition cursor-pointer duration-300">
                 Participar
               </button>
             </div>

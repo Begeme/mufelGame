@@ -10,12 +10,14 @@ import { useUser } from "../../context/UserContext";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useCart } from "../../context/CartContext";
 
 export default function Navbar() {
   const { t } = useTranslation();
   const router = useRouter();
   const context = useUser();
   const user = context !== "loading" ? context.user : null;
+  const { carrito } = useCart();
 
   const [language, setLanguage] = useState("es");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -40,6 +42,17 @@ export default function Navbar() {
       setLanguage(savedLang);
     });
   }, []);
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang).then(() => {
@@ -80,19 +93,25 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-black bg-opacity-95 backdrop-blur-sm text-white z-50 shadow-sm">
+    <nav className="fixed top-0 left-0 w-full bg-black bg-opacity-95 backdrop-blur-sm text-white z-[9999] shadow-sm">
       <div className="container mx-auto flex justify-between items-center h-14 px-4">
-        <Link href="/">
-          <Image
-            src="/img/logo-sin-fondo.png"
-            alt="Logo"
-            width={32}
-            height={32}
-            className="cursor-pointer"
-          />
-        </Link>
+        {/* Logo */}
+        <div className="flex-shrink-0">
+          <Link href="/">
+            <Image
+              src="/img/logo-sin-fondo.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="cursor-pointer"
+            />
+          </Link>
+        </div>
 
-        <div className="hidden md:flex flex-1 justify-center space-x-6 items-center text-sm font-semibold tracking-wide uppercase">
+        <div className="hidden lg:flex flex-1 justify-center space-x-6 items-center text-sm font-semibold tracking-wide uppercase ml-50">
+          <Link href="/" className="hover:text-yellow-400">
+            Inicio
+          </Link>
           <Link href="/game" className="hover:text-yellow-400">
             {t("navbar.game")}
           </Link>
@@ -107,11 +126,11 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="hidden md:flex items-center space-x-3 text-sm">
+        <div className="hidden lg:flex items-center space-x-3 text-sm ml-auto">
           <div className="relative" ref={langRefDesktop}>
             <button
               onClick={() => setLangDropdown(!langDropdown)}
-              className="flex items-center px-3 py-1 bg-gray-800 hover:bg-gray-700 transition"
+              className="flex items-center text-xs px-2 py-0.5 bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
             >
               <FiGlobe size={16} className="mr-1" />
               {languages[language as keyof typeof languages]}
@@ -128,7 +147,7 @@ export default function Navbar() {
                   <button
                     key={key}
                     onClick={() => changeLanguage(key)}
-                    className={`block w-full text-left px-4 py-2 hover:bg-gray-700 ${
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-700  ${
                       language === key ? "bg-gray-700" : ""
                     }`}
                   >
@@ -138,12 +157,11 @@ export default function Navbar() {
               </motion.div>
             )}
           </div>
-
           {user ? (
             <div ref={userRef} className="relative">
               <button
                 onClick={() => setUserDropdown(!userDropdown)}
-                className="px-3 py-1 bg-gray-800 hover:bg-gray-700 transition font-semibold flex items-center gap-1"
+                className="text-xs  px-2 py-0.5 text-black bg-amber-600 hover:bg-amber-500 transition font-bold flex items-center gap-1 cursor-pointer"
               >
                 {user.username}
                 <span className="text-xs">{userDropdown ? "▲" : "▼"}</span>
@@ -188,7 +206,7 @@ export default function Navbar() {
                       setUserDropdown(false);
                       handleLogout();
                     }}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-700"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-700 cursor-pointer"
                   >
                     Cerrar sesión
                   </button>
@@ -198,56 +216,53 @@ export default function Navbar() {
           ) : (
             <Button
               onClick={() => router.push("/register")}
-              className="text-sm px-3 py-1"
+              className="text-xs px-2 py-0.5 cursor-pointer"
             >
               {t("navbar.signup")}
             </Button>
           )}
-        </div>
-
-        <div className="md:hidden relative" ref={langRefMobile}>
-          <button
-            className="ml-2 flex items-center text-xs px-2 py-1 bg-gray-800 hover:bg-gray-700"
-            onClick={() => setLangDropdownMobile(!langDropdownMobile)}
+          <Link
+            href="/cart"
+            className="relative px-3 py-2 bg-gray-800 hover:bg-gray-700 transition rounded flex items-center"
           >
-            <FiGlobe className="mr-1" size={14} />
-            {languages[language as keyof typeof languages]}
-          </button>
-
-          {langDropdownMobile && (
-            <motion.div
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              className="absolute left-0 mt-2 w-32 bg-black text-white rounded-md shadow-lg z-50 border border-gray-700 text-sm"
-            >
-              {Object.entries(languages).map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => changeLanguage(key)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-700 ${
-                    language === key ? "bg-gray-700" : ""
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </motion.div>
-          )}
+            🛒
+            {carrito.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                {carrito.reduce((acc, item) => acc + item.cantidad, 0)}
+              </span>
+            )}
+          </Link>
         </div>
 
-        <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+        <button
+          className="block lg:hidden cursor-pointer"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
           {menuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
         </button>
       </div>
 
       {menuOpen && (
-        <div className="md:hidden bg-black bg-opacity-95 p-4 space-y-2 text-left text-sm">
+        <div className="block lg:hidden fixed top-14 left-0 w-full max-h-[calc(100vh-56px)] overflow-y-auto bg-black bg-opacity-95 p-4 pb-24 space-y-4 text-left text-sm z-[9999]">
           {[
+            { href: "/", label: "Inicio" },
             { href: "/game", label: t("navbar.game") },
             { href: "/tracker", label: t("navbar.tracker") },
             { href: "/news", label: t("navbar.news") },
             { href: "/merch", label: t("navbar.merch") },
+            {
+              href: "/cart",
+              label: (
+                <span className="flex items-center gap-2">
+                  🛒 Ver Cesta
+                  {carrito.length > 0 && (
+                    <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                      {carrito.reduce((acc, item) => acc + item.cantidad, 0)}
+                    </span>
+                  )}
+                </span>
+              ),
+            },
           ].map(({ href, label }) => (
             <Link
               key={href}
@@ -258,12 +273,45 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+          <div ref={langRefMobile}>
+            <button
+              className="mt-2 flex items-center text-xs px-2 py-2 bg-gray-800 hover:bg-gray-700 rounded w-full cursor-pointer"
+              onClick={() => setLangDropdownMobile(!langDropdownMobile)}
+            >
+              <FiGlobe className="mr-2" size={16} />
+              {languages[language as keyof typeof languages]}
+              <span className="ml-auto text-xs">
+                {langDropdownMobile ? "▲" : "▼"}
+              </span>
+            </button>
+
+            {langDropdownMobile && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="mt-2 w-full max-h-[160px] overflow-y-auto overscroll-contain touch-pan-y bg-black text-white rounded-md shadow-lg border border-gray-700 text-sm z-50"
+              >
+                {Object.entries(languages).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => changeLanguage(key)}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-700 ${
+                      language === key ? "bg-gray-700" : ""
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </div>
 
           {user ? (
             <div className="mt-4" ref={userMobileRef}>
               <button
                 onClick={() => setUserDropdownMobile((prev) => !prev)}
-                className="w-full px-3 py-3 text-left bg-gray-800 text-white rounded-md flex justify-between items-center font-semibold text-base"
+                className="w-full px-3 py-3 text-left bg-amber-600 text-black cursor-pointer rounded-md flex justify-between items-center font-semibold text-base"
               >
                 {user.username}
                 <span className="text-sm">
@@ -271,14 +319,17 @@ export default function Navbar() {
                 </span>
               </button>
 
-              <div
-                className={`transition-all duration-200 overflow-hidden ${
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={
                   userDropdownMobile
-                    ? "max-h-[500px] opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
+                    ? { opacity: 1, height: 250 }
+                    : { opacity: 0, height: 0 }
+                }
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
               >
-                <div className="mt-2 bg-gray-900 text-white rounded-md shadow-md border border-gray-700 overflow-hidden">
+                <div className="h-full overflow-y-auto bg-gray-900 text-white rounded-md shadow-md border border-gray-700">
                   <Link
                     href="/download"
                     onClick={() => {
@@ -325,12 +376,12 @@ export default function Navbar() {
                       setMenuOpen(false);
                       handleLogout();
                     }}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-700"
+                    className="w-full text-left px-4 py-3 hover:bg-gray-700 cursor-pointer"
                   >
                     Cerrar sesión
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </div>
           ) : (
             <div className="mt-4">
@@ -339,7 +390,7 @@ export default function Navbar() {
                   setMenuOpen(false);
                   router.push("/register");
                 }}
-                className="w-full"
+                className="w-full text-xs px-2 py-0.5"
               >
                 {t("navbar.signup")}
               </Button>

@@ -24,7 +24,7 @@ export default function Hero() {
           Únete a la acción y demuestra tu habilidad.
         </p>
         <button
-          className="mt-6 bg-yellow-500 text-black px-6 py-3 rounded-lg text-xl font-bold hover:bg-yellow-400 transition duration-300"
+          className="mt-6 bg-yellow-500 text-black px-6 py-3 rounded-lg text-xl font-bold hover:bg-yellow-400 transition duration-300 cursor-pointer"
           onClick={() => setIsModalOpen(true)}
         >
           Jugar Gratis

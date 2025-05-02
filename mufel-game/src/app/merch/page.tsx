@@ -8,20 +8,15 @@ import { useState } from "react";
 const productos: Producto[] = [
   {
     id: 1,
-    nombre: "Zapatillas MBH",
+    nombre: "Mufel Pop",
     variantes: [
       {
         color: "Negro",
         disponible: true,
-        imagenes: ["/img/mbh-zapatillas.webp", "/img/mbh-zapatillas.webp"],
+        imagenes: ["/img/mufel-pop.png"],
         precio: 24.99,
       },
-      {
-        color: "Blanco",
-        disponible: false,
-        imagenes: ["/img/logo-mufel.jpg", "/img/logo-sin-fondo.png"],
-        precio: 24.99,
-      },
+      
     ],
   },
   {
@@ -29,10 +24,100 @@ const productos: Producto[] = [
     nombre: "Sudadera MBH",
     variantes: [
       {
+        color: "Blanco",
+        disponible: true,
+        imagenes: ["/img/sudadera-blanca1.png", "/img/sudadera-blanca2.png"],
+        precio: 29.99,
+      },
+      {
+        color: "Rojo",
+        disponible: true,
+        imagenes: ["/img/sudadera-blanca1.png"],
+        precio: 29.99,
+      },
+      {
+        color: "Azul",
+        disponible: true,
+        imagenes: ["/img/sudadera-blanca2.png"],
+        precio: 29.99,
+      },
+      {
+        color: "Amarillo",
+        disponible: true,
+        imagenes: ["/img/sudadera-blanca1.png"],
+        precio: 29.99,
+      },
+    ],
+  },
+  {
+    id: 3,
+    nombre: "Taza MBH",
+    variantes: [
+      {
         color: "Negro",
         disponible: true,
-        imagenes: ["/img/modelo-mbh.webp"],
-        precio: 29.99,
+        imagenes: ["/img/taza-negra.png"],
+        precio: 12.99,
+      },
+      {
+        color: "Blanco",
+        disponible: true,
+        imagenes: ["/img/taza-edicion-especial.png"],
+        precio: 14.99,
+      },
+    ],
+  },
+  {
+    id: 4,
+    nombre: "Peluche Mufel",
+    variantes: [
+      {
+        color: "Único",
+        disponible: true,
+        imagenes: ["/img/peluche-mufel.png"],
+        precio: 19.99,
+      },
+    ],
+  },
+  {
+    id: 5,
+    nombre: "Alfombrilla Mufel",
+    variantes: [
+      {
+        color: "Clásica",
+        disponible: true,
+        imagenes: ["/img/alfombrilla.png"],
+        precio: 9.99,
+      },
+      {
+        color: "XL",
+        disponible: true,
+        imagenes: ["/img/alfombrilla-xl.png"],
+        precio: 14.99,
+      },
+    ],
+  },
+  {
+    id: 6,
+    nombre: "Gorra Mufel",
+    variantes: [
+      {
+        color: "Negro",
+        disponible: true,
+        imagenes: ["/img/gorra-negra.png"],
+        precio: 15.99,
+      },
+      {
+        color: "Blanco",
+        disponible: true,
+        imagenes: ["/img/gorra-blanca.png"],
+        precio: 15.99,
+      },
+      {
+        color: "Edición Especial",
+        disponible: true,
+        imagenes: ["/img/gorra-edicion-especial.png"],
+        precio: 18.99,
       },
     ],
   },

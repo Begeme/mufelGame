@@ -94,21 +94,21 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-black bg-opacity-95 backdrop-blur-sm text-white z-[9999] shadow-sm">
-      <div className="container mx-auto flex justify-between items-center h-14 px-4">
+      <div className="w-full flex justify-between items-center h-20 px-6">
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link href="/">
             <Image
               src="/img/logo-sin-fondo.png"
               alt="Logo"
-              width={40}
-              height={40}
+              width={50}
+              height={50}
               className="cursor-pointer"
             />
           </Link>
         </div>
 
-        <div className="hidden lg:flex flex-1 justify-center space-x-6 items-center text-sm font-semibold tracking-wide uppercase ml-50">
+        <div className="hidden lg:flex flex-1 justify-center space-x-8 items-center text-base font-semibold tracking-wide uppercase ml-80">
           <Link href="/" className="hover:text-yellow-400">
             Inicio
           </Link>
@@ -130,7 +130,7 @@ export default function Navbar() {
           <div className="relative" ref={langRefDesktop}>
             <button
               onClick={() => setLangDropdown(!langDropdown)}
-              className="flex items-center text-xs px-2 py-0.5 bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
+              className="flex items-center text-sm px-3 py-1 bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
             >
               <FiGlobe size={16} className="mr-1" />
               {languages[language as keyof typeof languages]}
@@ -161,7 +161,7 @@ export default function Navbar() {
             <div ref={userRef} className="relative">
               <button
                 onClick={() => setUserDropdown(!userDropdown)}
-                className="text-xs  px-2 py-0.5 text-black bg-amber-600 hover:bg-amber-500 transition font-bold flex items-center gap-1 cursor-pointer"
+                className="text-sm px-3 py-1 text-black bg-amber-600 hover:bg-amber-500 transition font-bold flex items-center gap-1 cursor-pointer"
               >
                 {user.username}
                 <span className="text-xs">{userDropdown ? "▲" : "▼"}</span>
@@ -223,7 +223,7 @@ export default function Navbar() {
           )}
           <Link
             href="/cart"
-            className="relative px-3 py-2 bg-gray-800 hover:bg-gray-700 transition rounded flex items-center"
+            className="relative px-3 py-2 text-lg bg-gray-800 hover:bg-gray-700 transition rounded-xl flex items-center"
           >
             🛒
             {carrito.length > 0 && (

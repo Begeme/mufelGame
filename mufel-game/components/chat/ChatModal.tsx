@@ -36,6 +36,7 @@ export default function ChatModal({ user }: ChatModalProps) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasInteracted = useRef(false);
+  
 
   useEffect(() => {
     const markInteraction = () => {

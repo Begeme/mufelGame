@@ -45,7 +45,7 @@ export default function Shop() {
 
         <div className="flex justify-center space-x-6 mb-6">
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
               selectedCategory === "skins"
                 ? "bg-yellow-500 text-black scale-105"
                 : "bg-gray-700 hover:bg-yellow-400"
@@ -56,7 +56,7 @@ export default function Shop() {
           </button>
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
               selectedCategory === "recompensas"
                 ? "bg-yellow-500 text-black scale-105"
                 : "bg-gray-700 hover:bg-yellow-400"
@@ -80,7 +80,7 @@ export default function Shop() {
               <h3 className="text-xl font-bold">{item.nombre}</h3>
               <p className="text-gray-300 mt-2">{item.descripcion}</p>
               <p className="mt-2 font-semibold text-yellow-400">{item.precio}</p>
-              <button className="mt-4 bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition duration-300">
+              <button className="mt-4 bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition duration-300 cursor-pointer">
                 Comprar
               </button>
             </div>

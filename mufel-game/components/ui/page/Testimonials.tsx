@@ -73,13 +73,13 @@ export default function Testimonials() {
           <div className="flex justify-between mt-4">
             <button
               onClick={prevTestimonial}
-              className="bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-500 transition duration-300"
+              className="bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-500 transition duration-300 cursor-pointer"
             >
               ⬅ Anterior
             </button>
             <button
               onClick={nextTestimonial}
-              className="bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-500 transition duration-300"
+              className="bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-500 transition duration-300 cursor-pointer"
             >
               Siguiente ➡
             </button>

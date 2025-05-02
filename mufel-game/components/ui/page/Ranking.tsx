@@ -30,7 +30,7 @@ export default function Ranking() {
 
         <div className="flex justify-center space-x-6 mb-6">
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
               selectedMode === "plataformas"
                 ? "bg-yellow-500 text-black scale-105"
                 : "bg-gray-700 hover:bg-yellow-400"
@@ -41,7 +41,7 @@ export default function Ranking() {
           </button>
 
           <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 transform ${
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
               selectedMode === "roguelike"
                 ? "bg-yellow-500 text-black scale-105"
                 : "bg-gray-700 hover:bg-yellow-400"

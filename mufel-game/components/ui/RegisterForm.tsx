@@ -56,7 +56,7 @@ export default function RegisterForm() {
         password,
         options: {
           data: { username },
-          emailRedirectTo: 'http://localhost:3000/login',
+          emailRedirectTo: 'https://mufel-game.vercel.app/login',
         },
       });
       

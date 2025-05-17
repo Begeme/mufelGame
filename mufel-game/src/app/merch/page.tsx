@@ -2,13 +2,16 @@
 import Image from "next/image";
 import Navbar from "../../../components/ui/Navbar";
 import Footer from "../../../components/ui/Footer";
-import ProductoModal, { Producto } from "../../../components/merch/ProductModal";
+import ProductoModal from "../../../components/merch/ProductModal";
+import type { Producto } from "@/data/productos";
 import { useState } from "react";
 
 const productos: Producto[] = [
   {
     id: 1,
     nombre: "Mufel Pop",
+    tipoOpciones: "unico",
+    descripcion: "Figura coleccionable edición limitada de Mufel en su versión Funko Pop, con traje elegante.",
     variantes: [
       {
         color: "Negro",
@@ -16,35 +19,43 @@ const productos: Producto[] = [
         imagenes: ["/img/mufel-pop.png"],
         precio: 24.99,
       },
-      
     ],
   },
   {
     id: 2,
     nombre: "Sudadera MBH",
+    tipoOpciones: "completo",
+    tallas: ["XS", "S", "M", "L", "XL"],
+    descripcion: "Sudadera MBH con capucha, ideal para mantenerte abrigado con estilo Mufel.",
     variantes: [
       {
         color: "Blanco",
         disponible: true,
-        imagenes: ["/img/sudadera-blanca1.png", "/img/sudadera-blanca2.png"],
+        imagenes: ["/img/sudadera-offwhite1.png", "/img/sudadera-offwhite2.png"],
         precio: 29.99,
       },
       {
         color: "Rojo",
         disponible: true,
-        imagenes: ["/img/sudadera-blanca1.png"],
+        imagenes: ["/img/sudadera-roja1.png", "/img/sudadera-roja2.png"],
         precio: 29.99,
       },
       {
         color: "Azul",
         disponible: true,
-        imagenes: ["/img/sudadera-blanca2.png"],
+        imagenes: ["/img/sudadera-azul1.png", "/img/sudadera-azul2.png"],
         precio: 29.99,
       },
       {
         color: "Amarillo",
         disponible: true,
-        imagenes: ["/img/sudadera-blanca1.png"],
+        imagenes: ["/img/sudadera-amarilla1.png", "/img/sudadera-amarilla2.png"],
+        precio: 29.99,
+      },
+      {
+        color: "Negro",
+        disponible: true,
+        imagenes: ["/img/sudadera-negra1.png", "/img/sudadera-negra2.png"],
         precio: 29.99,
       },
     ],
@@ -52,6 +63,8 @@ const productos: Producto[] = [
   {
     id: 3,
     nombre: "Taza MBH",
+    tipoOpciones: "color",
+    descripcion: "Empieza tus mañanas con una taza de café y el espíritu de Mufel.",
     variantes: [
       {
         color: "Negro",
@@ -62,6 +75,12 @@ const productos: Producto[] = [
       {
         color: "Blanco",
         disponible: true,
+        imagenes: ["/img/taza-blanca.png"],
+        precio: 12.99,
+      },
+      {
+        color: "Edición Especial",
+        disponible: true,
         imagenes: ["/img/taza-edicion-especial.png"],
         precio: 14.99,
       },
@@ -70,6 +89,8 @@ const productos: Producto[] = [
   {
     id: 4,
     nombre: "Peluche Mufel",
+    tipoOpciones: "unico",
+    descripcion: "Suave peluche de Mufel, perfecto para acompañarte en tus aventuras y siestas.",
     variantes: [
       {
         color: "Único",
@@ -80,26 +101,31 @@ const productos: Producto[] = [
     ],
   },
   {
-    id: 5,
-    nombre: "Alfombrilla Mufel",
-    variantes: [
-      {
-        color: "Clásica",
-        disponible: true,
-        imagenes: ["/img/alfombrilla.png"],
-        precio: 9.99,
-      },
-      {
-        color: "XL",
-        disponible: true,
-        imagenes: ["/img/alfombrilla-xl.png"],
-        precio: 14.99,
-      },
-    ],
-  },
+  id: 5,
+  nombre: "Alfombrilla Mufel",
+  tipoOpciones: "talla",
+  tallas: ["M", "XL"],
+  descripcion: "Alfombrilla gamer con diseño de Mufel. Disponible en tamaño clásico y XL.",
+  variantes: [
+    {
+      color: "M",
+      disponible: true,
+      imagenes: ["/img/alfombrilla.png"],
+      precio: 9.99,
+    },
+    {
+      color: "XL",
+      disponible: true,
+      imagenes: ["/img/alfombrilla-xl.png"],
+      precio: 14.99,
+    },
+  ],
+},
   {
     id: 6,
     nombre: "Gorra Mufel",
+    tipoOpciones: "color",
+    descripcion: "Gorra ajustable con el logo de Mufel. Disponible en varios colores, incluido edición especial.",
     variantes: [
       {
         color: "Negro",
@@ -129,7 +155,7 @@ export default function MerchPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow bg-gray-900 text-white py-10 pt-20">
+      <main className="flex-grow bg-gray-900 text-white py-10 pt-32">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">Tienda de Merchandising</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

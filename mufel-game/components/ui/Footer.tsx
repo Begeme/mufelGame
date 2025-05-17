@@ -78,7 +78,7 @@ export default function Footer() {
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
               <FaTwitter size={24} className="hover:text-yellow-400 transition duration-300" />
             </a>
-            <a href="https://discord.gg/UzyKT4TC" target="_blank" rel="noopener noreferrer">
+            <a href="https://discord.gg/77EY9dWu" target="_blank" rel="noopener noreferrer">
               <FaDiscord size={24} className="hover:text-yellow-400 transition duration-300" />
             </a>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">

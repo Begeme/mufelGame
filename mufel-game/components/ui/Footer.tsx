@@ -75,13 +75,13 @@ export default function Footer() {
         <div>
           <h3 className="text-xl font-semibold mb-3">Síguenos</h3>
           <div className="flex justify-center md:justify-start space-x-4">
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://x.com/MufelGame" target="_blank" rel="noopener noreferrer">
               <FaTwitter size={24} className="hover:text-yellow-400 transition duration-300" />
             </a>
             <a href="https://discord.gg/77EY9dWu" target="_blank" rel="noopener noreferrer">
               <FaDiscord size={24} className="hover:text-yellow-400 transition duration-300" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/mufelgame/" target="_blank" rel="noopener noreferrer">
               <FaInstagram size={24} className="hover:text-yellow-400 transition duration-300" />
             </a>
           </div>

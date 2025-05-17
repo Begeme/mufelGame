@@ -27,7 +27,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const offset = 140;
+      const offset = 200;
       let currentSection = "profile";
 
       for (const s of sections) {
@@ -50,7 +50,7 @@ export default function SettingsPage() {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const yOffset = -100;
+      const yOffset = -150;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
@@ -100,20 +100,20 @@ export default function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 py-10">
-          <aside className="hidden md:block space-y-4 sticky top-24 self-start">
+          <aside className="hidden md:block space-y-3 sticky top-24 self-start">
             {sections.map((s) => (
               <button
                 key={s.id}
                 onClick={() => scrollTo(s.id)}
-                className={`flex items-center gap-2 w-full text-left text-sm font-medium px-3 py-2 rounded-md transition
-                ${
-                  activeSection === s.id
-                    ? "bg-red-600 text-white"
-                    : "hover:bg-gray-800 text-gray-300"
-                }`}
+                className={`flex items-center gap-3 w-full text-left text-base font-medium px-4 py-3 rounded-lg transition
+        ${
+          activeSection === s.id
+            ? "bg-red-600 text-white"
+            : "hover:bg-gray-800 text-gray-300"
+        }`}
               >
-                <span>{s.icon}</span>
-                <span>{s.label}</span>
+                <span className="text-lg">{s.icon}</span>
+                <span className="tracking-wide">{s.label}</span>
               </button>
             ))}
           </aside>

@@ -1,60 +1,86 @@
+// app/news/page.tsx
 "use client";
-import Image from "next/image";
-import Navbar from "../../../components/ui/Navbar";
-import Footer from "../../../components/ui/Footer";
 
-const noticias = [
-  {
-    id: 1,
-    titulo: "Nuevo Torneo Anunciado",
-    descripcion: "Un torneo global está por comenzar, ¡prepárate!",
-    imagen: "/img/logo-mufel.jpeg",
-  },
-  {
-    id: 2,
-    titulo: "Actualización de Balance",
-    descripcion: "Nuevos ajustes en personajes y habilidades.",
-    imagen: "/img/fondo-mufel.png",
-  },
-  {
-    id: 3,
-    titulo: "Modo Especial Disponible",
-    descripcion: "Un nuevo modo de juego llega por tiempo limitado.",
-    imagen: "/img/edificios.png",
-  },
-];
+import { useEffect, useState } from "react";
+import { supabase } from "../../../lib/supabaseClient";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const NewsModal = dynamic(() => import("../../../components/news/NewsModal"));
+const NewsFilter = dynamic(() => import("../../../components/news/NewsFilter"));
+
+interface NewsItem {
+  id: number;
+  title: string;
+  description: string;
+  content: string;
+  image: string;
+  category: string;
+  created_at: string;
+}
 
 export default function NewsPage() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [filtered, setFiltered] = useState<NewsItem[]>([]);
+  const [activeCategory, setActiveCategory] = useState("Todos");
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const { data, error } = await supabase
+        .from("news")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) {
+        setNews(data);
+        setFiltered(data);
+      }
+    };
+    fetchNews();
+  }, []);
+
+  const handleFilter = (category: string) => {
+    setActiveCategory(category);
+    if (category === "Todos") return setFiltered(news);
+    setFiltered(news.filter((n) => n.category === category));
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow bg-gray-900 text-white py-10 pt-20">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Últimas Noticias</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {noticias.map((noticia) => (
-              <div
-                key={noticia.id}
-                className="relative rounded-lg overflow-hidden group"
-              >
-                <Image
-                  src={noticia.imagen}
-                  alt={noticia.titulo}
-                  width={300}
-                  height={200}
-                  className="w-full h-64 object-cover group-hover:scale-105 transition duration-300"
-                />
-                <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition duration-300"></div>
-                <div className="absolute bottom-0 left-0 w-full p-4 text-white">
-                  <h3 className="text-xl font-bold">{noticia.titulo}</h3>
-                  <p className="text-gray-300">{noticia.descripcion}</p>
-                </div>
+    <div className="min-h-screen bg-gray-900 text-white pt-32 px-6 pb-10">
+      <div className="container mx-auto">
+        <h1 className="text-4xl font-bold mb-6 text-center">📰 Últimas Noticias</h1>
+
+        <NewsFilter active={activeCategory} onChange={handleFilter} />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+          {filtered.map((item) => (
+            <div
+              key={item.id}
+              className="relative rounded-xl overflow-hidden bg-gray-800 shadow hover:shadow-xl transition cursor-pointer"
+              onClick={() => setSelectedNews(item)}
+            >
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={400}
+                height={240}
+                className="w-full h-52 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-bold mb-1">{item.title}</h3>
+                <p className="text-sm text-gray-300">{item.description}</p>
+                <span className="text-xs text-yellow-500 block mt-2">
+                  {item.category} • {new Date(item.created_at).toLocaleDateString()}
+                </span>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </main>
-      <Footer />
+      </div>
+
+      {selectedNews && (
+        <NewsModal news={selectedNews} onClose={() => setSelectedNews(null)} />
+      )}
     </div>
   );
 }

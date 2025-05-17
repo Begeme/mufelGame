@@ -4,35 +4,46 @@ import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-
-export interface Variante {
-  color: string;
-  disponible: boolean;
-  imagenes: string[];
-  precio: number;
-}
-
-export interface Producto {
-  id: number;
-  nombre: string;
-  variantes: Variante[];
-}
+import type { Producto, Variante } from "@/data/productos";
 
 interface Props {
   producto: Producto;
   onClose: () => void;
 }
 
-const tallasPorDefecto = ["XS", "S", "M", "L", "XL"];
-const coloresFake = ["#000000", "#ff0000", "#0000ff"]; // negro, rojo, azul
+const colorToHex = (color: string) => {
+  switch (color.toLowerCase()) {
+    case "negro":
+      return "#000000";
+    case "blanco":
+      return "#ffffff";
+    case "rojo":
+      return "#ff0000";
+    case "azul":
+      return "#0000ff";
+    case "amarillo":
+      return "#ffff00";
+    case "clásica":
+      return "#444";
+    case "xl":
+      return "#888";
+    default:
+      return "#777";
+  }
+};
 
 export default function ProductoModal({ producto, onClose }: Props) {
   const { agregarProducto } = useCart();
 
+  const esUnico = producto.tipoOpciones === "unico";
+  const soloTalla = producto.nombre.toLowerCase().includes("alfombrilla");
+
   const [colorSeleccionado, setColorSeleccionado] = useState<Variante>(
     producto.variantes.find((v) => v.disponible) || producto.variantes[0]
   );
-  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>("M");
+  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>(
+    producto.tallas?.[0] || "M"
+  );
   const [imagenSeleccionada, setImagenSeleccionada] = useState<string>(
     colorSeleccionado.imagenes[0]
   );
@@ -42,7 +53,20 @@ export default function ProductoModal({ producto, onClose }: Props) {
       producto.variantes.find((v) => v.disponible) || producto.variantes[0];
     setColorSeleccionado(varianteDefault);
     setImagenSeleccionada(varianteDefault.imagenes[0]);
-    setTallaSeleccionada("M");
+
+    if (soloTalla && producto.tallas) {
+      const tallaPorDefecto = producto.tallas[0];
+      setTallaSeleccionada(tallaPorDefecto);
+      const variantePorTalla = producto.variantes.find(
+        (v) => v.color.toLowerCase() === tallaPorDefecto.toLowerCase()
+      );
+      if (variantePorTalla) {
+        setColorSeleccionado(variantePorTalla);
+        setImagenSeleccionada(variantePorTalla.imagenes[0]);
+      }
+    } else {
+      setTallaSeleccionada(producto.tallas?.[0] || "M");
+    }
   }, [producto]);
 
   const [toastQueue, setToastQueue] = useState<string[]>([]);
@@ -55,7 +79,6 @@ export default function ProductoModal({ producto, onClose }: Props) {
   useEffect(() => {
     if (!isToastActive && toastQueue.length > 0) {
       const nextMessage = toastQueue[0];
-
       const toastId = toast.success(nextMessage, {
         icon: "✅",
         duration: 2500,
@@ -79,8 +102,12 @@ export default function ProductoModal({ producto, onClose }: Props) {
   const handleAddToCart = () => {
     if (!colorSeleccionado.disponible) return;
 
+    const id = soloTalla
+      ? `${producto.id}-${tallaSeleccionada}`
+      : `${producto.id}-${colorSeleccionado.color}-${tallaSeleccionada}`;
+
     agregarProducto({
-      id: `${producto.id}-${colorSeleccionado.color}-${tallaSeleccionada}`,
+      id,
       nombre: producto.nombre,
       imagen: imagenSeleccionada,
       precio: colorSeleccionado.precio,
@@ -90,6 +117,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
     });
 
     showToastEnCola("🛒 Producto añadido a la cesta");
+    onClose();
   };
 
   return (
@@ -97,106 +125,143 @@ export default function ProductoModal({ producto, onClose }: Props) {
       className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      onClick={onClose}
     >
-      <div className="bg-gray-900 w-full max-w-3xl max-h-[95vh] overflow-y-auto rounded-lg p-4 sm:p-6 relative">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-gray-900 w-full max-w-3xl max-h-[95vh] overflow-y-auto rounded-lg p-4 sm:p-6 relative"
+      >
         <button
           onClick={onClose}
-          className="absolute top-3 right-4 text-white text-2xl hover:text-red-400"
+          className="absolute top-3 right-4 text-white text-2xl hover:text-red-400 cursor-pointer"
         >
           ×
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Imagen principal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div>
             <div className="w-full h-[300px] relative">
               <Image
                 src={imagenSeleccionada}
-                alt={`${producto.nombre}`}
+                alt={producto.nombre}
                 fill
                 className="object-contain rounded-md"
               />
             </div>
-            {/* Miniaturas */}
-            <div className="flex gap-2 mt-4 justify-center">
-              {colorSeleccionado.imagenes.map((img, i) => (
-                <Image
-                  key={i}
-                  src={img}
-                  alt={`Vista ${i + 1}`}
-                  width={80}
-                  height={80}
-                  onClick={() => setImagenSeleccionada(img)}
-                  className={`rounded-md cursor-pointer border transition ${
-                    imagenSeleccionada === img
-                      ? "border-yellow-400"
-                      : "border-gray-700 hover:border-yellow-300"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Info producto */}
-          <div className="text-white">
-            <h2 className="text-2xl font-bold mb-4">{producto.nombre}</h2>
-
-            {/* Colores siempre visibles */}
-            <div className="mb-4">
-              <p className="font-semibold mb-2">Color:</p>
-              <div className="flex gap-3 flex-wrap">
-                {coloresFake.map((color, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() =>
-                      setColorSeleccionado({
-                        ...colorSeleccionado,
-                        color: color,
-                      })
-                    }
-                    className={`w-10 h-10 rounded-full border-2 transition ${
-                      colorSeleccionado.color.toLowerCase() === color
+            {colorSeleccionado.imagenes.length > 1 && (
+              <div className="flex gap-2 mt-4 justify-center">
+                {colorSeleccionado.imagenes.map((img, i) => (
+                  <Image
+                    key={i}
+                    src={img}
+                    alt={`Vista ${i + 1}`}
+                    width={80}
+                    height={80}
+                    onClick={() => setImagenSeleccionada(img)}
+                    className={`rounded-md cursor-pointer border transition ${
+                      imagenSeleccionada === img
                         ? "border-yellow-400"
                         : "border-gray-700 hover:border-yellow-300"
                     }`}
-                    style={{ backgroundColor: color }}
                   />
                 ))}
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Tallas siempre visibles */}
-            <div className="mb-4">
-              <p className="font-semibold mb-2">Talla:</p>
-              <div className="flex gap-3 flex-wrap">
-                {tallasPorDefecto.map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTallaSeleccionada(t)}
-                    className={`w-10 h-10 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition ${
-                      tallaSeleccionada === t
-                        ? "bg-white text-black border-white"
-                        : "text-white border-gray-600 hover:border-white"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
+          <div
+            className={`text-white ${
+              esUnico
+                ? "flex flex-col items-center justify-center text-center gap-4"
+                : ""
+            }`}
+          >
+            <h2 className="text-2xl font-bold mb-2">{producto.nombre}</h2>
+
+            {colorSeleccionado.color.toLowerCase().includes("edición") && (
+              <div className="inline-block px-3 py-1 mb-2 rounded-full text-xs font-bold bg-yellow-400 text-black animate-pulse shadow-md">
+                🎖 Edición Limitada
               </div>
-            </div>
+            )}
 
-            {/* Precio */}
-            <p className="text-xl text-yellow-400 font-bold mb-4">
+            {producto.descripcion && (
+              <p className="text-sm text-gray-400 max-w-md mb-2">
+                {producto.descripcion}
+              </p>
+            )}
+            <p className="text-xl text-yellow-400 font-bold">
               {colorSeleccionado.disponible
                 ? `${colorSeleccionado.precio.toFixed(2)}€`
                 : "Próximamente"}
             </p>
 
-            {/* Botón */}
+            {!esUnico && (
+              <>
+                {!soloTalla && (
+                  <div className="mb-4">
+                    <p className="font-semibold mb-2">Color:</p>
+                    <div className="flex gap-3 flex-wrap">
+                      {producto.variantes.map((variante, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            setColorSeleccionado(variante);
+                            setImagenSeleccionada(variante.imagenes[0]);
+                          }}
+                          className={`w-10 h-10 rounded-full border-2 transition cursor-pointer ${
+                            colorSeleccionado.color === variante.color
+                              ? "border-yellow-400"
+                              : "border-gray-700 hover:border-yellow-300"
+                          }`}
+                          style={{
+                            backgroundColor: colorToHex(variante.color),
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(producto.tipoOpciones === "completo" || soloTalla) &&
+                  producto.tallas && (
+                    <div className="mb-4">
+                      <p className="font-semibold mb-2">Talla:</p>
+                      <div className="flex gap-3 flex-wrap">
+                        {producto.tallas.map((t) => (
+                          <button
+                            key={t}
+                            onClick={() => {
+                              setTallaSeleccionada(t);
+                              if (soloTalla) {
+                                const variante = producto.variantes.find(
+                                  (v) =>
+                                    v.color.toLowerCase() === t.toLowerCase()
+                                );
+                                if (variante) {
+                                  setColorSeleccionado(variante);
+                                  setImagenSeleccionada(variante.imagenes[0]);
+                                }
+                              }
+                            }}
+                            className={`w-10 h-10 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition cursor-pointer ${
+                              tallaSeleccionada === t
+                                ? "bg-white text-black border-white"
+                                : "text-white border-gray-600 hover:border-white"
+                            }`}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </>
+            )}
+
             <button
               onClick={handleAddToCart}
               disabled={!colorSeleccionado.disponible}
-              className={`w-full py-2 rounded font-bold transition ${
+              className={`w-full max-w-xs py-2 rounded font-bold transition cursor-pointer ${
                 colorSeleccionado.disponible
                   ? "bg-yellow-500 hover:bg-yellow-400 text-black"
                   : "bg-gray-600 text-gray-300 cursor-not-allowed"

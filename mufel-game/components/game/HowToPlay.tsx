@@ -16,7 +16,7 @@ const gameModes = {
   roguelike: {
     title: "Modo Roguelike",
     movement: "Mueve con W, A, S, D en todas las direcciones.",
-    combat: "Clic derecho: Ataca.",
+    combat: "Clic izquierdo: Ataca.",
     objective: "Desbloquea salas de la mazmorra hasta encontrar la puerta de salida.",
     videos: {
       movement: "/videos/roguelike.mp4",

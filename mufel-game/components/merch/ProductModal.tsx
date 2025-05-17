@@ -117,7 +117,10 @@ export default function ProductoModal({ producto, onClose }: Props) {
     });
 
     showToastEnCola("🛒 Producto añadido a la cesta");
-    onClose();
+
+    setTimeout(() => {
+      onClose();
+    }, 500);
   };
 
   return (

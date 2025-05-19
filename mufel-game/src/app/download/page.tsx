@@ -54,7 +54,7 @@ export default function DownloadPage() {
       </motion.div>
 
       <motion.a
-        href="/downloads/mufelgame.zip"
+        href="https://eadfhzxijvqvcpesrrht.supabase.co/storage/v1/object/public/descargas//MufelGame.zip"
         download
         whileHover={{ scale: 1.05 }}
         className="bg-yellow-500 hover:bg-yellow-400 !text-black font-bold text-lg px-8 py-4 rounded-xl shadow-lg transition no-underline"

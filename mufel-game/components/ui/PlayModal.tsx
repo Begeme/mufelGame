@@ -1,5 +1,7 @@
 "use client";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PlayModalProps {
   isOpen: boolean;
@@ -7,48 +9,75 @@ interface PlayModalProps {
 }
 
 export default function PlayModal({ isOpen, onClose }: PlayModalProps) {
+  const router = useRouter();
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50">
-      <div className="absolute inset-0 bg-[#000000d5] bg-opacity-50 "></div>
-
-      <div className="relative bg-[#0D1221] p-12 rounded-lg shadow-lg w-[70%] max-w-4xl md:max-w-5xl h-[70%] flex flex-col justify-center">
-        <button
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          key="modal"
+          className="fixed inset-0 flex justify-center items-center z-50"
           onClick={onClose}
-          className="absolute top-2 right-2 bg-yellow-500 text-black p-3 rounded-lg hover:bg-yellow-400 transition"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
         >
-          ✖
-        </button>
+          {/* Fondo visible y suave */}
+          <motion.div
+            className="absolute inset-0 bg-black/30 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
 
-        <h2 className="text-3xl font-bold text-white text-center mb-8 italic">
-          PREPÁRATE PARA JUGAR
-        </h2>
-
-        <div className="flex flex-col md:flex-row justify-center items-center gap-12 text-[#0D1221] pt-7">
-          <div className="text-center">
-            <p className="text-gray-400 mb-3 text-lg">No tengo cuenta</p>
-            <button className=" w-50 h-15 bg-blue-400 px-10 py-5 rounded-lg font-bold text-sm hover:bg-blue-300 transition">
-              CREAR UNA
+          {/* Modal */}
+          <motion.div
+            onClick={(e) => e.stopPropagation()}
+            className="relative bg-gradient-to-br from-[#111827] via-[#0D1221] to-[#1f2937] p-10 md:p-12 rounded-xl shadow-2xl w-[90%] max-w-4xl h-auto md:h-[70%] flex flex-col justify-center items-center border border-gray-700"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 bg-yellow-500 text-black px-3 py-2 rounded-full hover:bg-yellow-400 transition text-lg cursor-pointer"
+            >
+              ✖
             </button>
-          </div>
 
-          <div className="text-center">
-            <p className="text-gray-400 mb-3 text-lg">Tengo una cuenta</p>
-            <button className="w-50 h-15 bg-yellow-500 px-10 py-5 rounded-lg font-bold text-sm hover:bg-yellow-400 transition">
-              INICIAR SESIÓN
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white text-center mb-8 italic tracking-wide">
+              PREPÁRATE PARA JUGAR
+            </h2>
+
+            <div className="flex flex-col md:flex-row justify-center items-center gap-12 text-center">
+              <div>
+                <p className="text-gray-300 mb-4 text-lg">No tengo cuenta</p>
+                <button
+                  onClick={() => router.push("/register")}
+                  className="w-52 h-14 bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-lg text-sm transition shadow-lg cursor-pointer"
+                >
+                  CREAR UNA
+                </button>
+              </div>
+
+              <div>
+                <p className="text-gray-300 mb-4 text-lg">Tengo una cuenta</p>
+                <button
+                  onClick={() => router.push("/login")}
+                  className="w-52 h-14 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg text-sm transition shadow-lg cursor-pointer"
+                >
+                  INICIAR SESIÓN
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

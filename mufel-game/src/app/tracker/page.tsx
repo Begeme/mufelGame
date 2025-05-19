@@ -1,11 +1,15 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
+import { supabase } from "../../../lib/supabaseClient";
+
 import SearchBar from "../../../components/tracker/SearchBar";
 import PlayerInfo from "../../../components/tracker/PlayerInfo";
 import RankedStats from "../../../components/tracker/RankedStats";
 import MatchHistory from "../../../components/tracker/MatchHistory";
 import SidebarStats from "../../../components/tracker/SidebarStats";
 import Footer from "../../../components/ui/Footer";
+import { getFullPlayerData } from "@/utils/playerMock";
 
 interface Player {
   avatar: string;
@@ -15,19 +19,22 @@ interface Player {
 
 interface RankedStatsProps {
   rank: string;
-  wins: number;
-  losses: number;
+  expeditions: number;
+  defeats: number;
 }
 
 interface Match {
-  result: string;
-  champion: string;
-  kda: string;
+  outcome: string;
+  playtime: string;
+  kills: number;
+  rooms: number;
 }
 
 interface SidebarStatsProps {
-  gamesPlayed: number;
-  avgKDA: string;
+  expeditions: number;
+  bestTime: string;
+  highestKills: number;
+  points?: number;
 }
 
 interface PlayerData {
@@ -39,74 +46,107 @@ interface PlayerData {
 
 export default function TrackerPage() {
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
+  const [topPlayers, setTopPlayers] = useState<PlayerData[]>([]);
 
   useEffect(() => {
-    const defaultData: PlayerData = {
-      player: {
-        avatar: "/img/logo-mufel.jpeg",
-        username: "JugadorEjemplo",
-        level: 50,
-      },
-      rankedStats: {
-        rank: "Platino II",
-        wins: 200,
-        losses: 150,
-      },
-      matchHistory: [
-        { result: "Victoria", champion: "Yasuo", kda: "12/5/9" },
-        { result: "Derrota", champion: "Lux", kda: "3/8/12" },
-        { result: "Victoria", champion: "Ezreal", kda: "7/2/14" },
-      ],
-      globalStats: {
-        gamesPlayed: 500,
-        avgKDA: "4.2",
-      },
+    const fetchTopPlayers = async () => {
+      const { data: rankings, error } = await supabase
+        .from("rankings")
+        .select("points, user_id")
+        .order("points", { ascending: false })
+        .limit(3);
+
+      if (error) return console.error("Error cargando rankings:", error);
+
+      const players: PlayerData[] = await Promise.all(
+        rankings.map(async (r) => {
+          const { data: user } = await supabase
+            .from("users")
+            .select("username, avatar_url")
+            .eq("id", r.user_id)
+            .single();
+
+          const playerData = getFullPlayerData(
+            r.user_id,
+            user?.username || "Desconocido",
+            user?.avatar_url,
+            r.points
+          );
+
+          return playerData;
+        })
+      );
+
+      setTopPlayers(players);
     };
-    setPlayerData(defaultData);
+
+    fetchTopPlayers();
   }, []);
 
   const handleSearch = async (username: string) => {
-    const mockData: PlayerData = {
-      player: {
-        avatar: "/img/logo-mufel.jpeg",
-        username,
-        level: 30,
-      },
-      rankedStats: {
-        rank: "Diamante IV",
-        wins: 120,
-        losses: 80,
-      },
-      matchHistory: [
-        { result: "Victoria", champion: "Ahri", kda: "10/2/8" },
-        { result: "Derrota", champion: "Zed", kda: "5/7/3" },
-        { result: "Victoria", champion: "Jinx", kda: "12/4/10" },
-      ],
-      globalStats: {
-        gamesPlayed: 200,
-        avgKDA: "3.5",
-      },
-    };
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("id, username, avatar_url, email")
+      .eq("username", username)
+      .single();
 
-    setPlayerData(mockData);
+    if (userError || !userData) return setPlayerData(null);
+
+    const { data: rankingData } = await supabase
+      .from("rankings")
+      .select("points")
+      .eq("user_id", userData.id)
+      .single();
+
+    const fetchedData = getFullPlayerData(
+      userData.id,
+      userData.username,
+      userData.avatar_url,
+      rankingData?.points || 0
+    );
+
+    setPlayerData(fetchedData);
   };
 
   return (
-    <div className="min-h-screen pt-20 flex flex-col justify-between">
-      <div className="container mx-auto py-10 flex-grow">
-        <div className="flex flex-col items-center">
+    <div className="min-h-screen pt-32 bg-gradient-to-b from-black via-gray-900 to-gray-950 text-white">
+      <div className="container mx-auto px-4 py-10 pb-24 flex-grow">
+        <div className="flex flex-col items-center mb-8">
+          <h1 className="text-4xl font-bold mb-4">
+            🏆 Clasificación de Expedicionistas
+          </h1>
+          <p className="text-gray-400 mb-6 text-center max-w-xl">
+            Revisa los mejores jugadores de la semana en MufelGame o busca tu
+            perfil para ver tu progreso.
+          </p>
           <SearchBar onSearch={handleSearch} />
         </div>
+
         {playerData && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="md:col-span-1">
               <PlayerInfo player={playerData.player} />
               <SidebarStats stats={playerData.globalStats} />
             </div>
-            <div className="md:col-span-2 mb-8 space-y-6">
+            <div className="md:col-span-2 space-y-6">
               <RankedStats stats={playerData.rankedStats} />
               <MatchHistory matches={playerData.matchHistory} />
             </div>
+          </div>
+        )}
+
+        {!playerData && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {topPlayers.map((player, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-700"
+              >
+                <PlayerInfo player={player.player} />
+                <SidebarStats stats={player.globalStats} />
+                <RankedStats stats={player.rankedStats} />
+              </div>
+            ))}
           </div>
         )}
       </div>

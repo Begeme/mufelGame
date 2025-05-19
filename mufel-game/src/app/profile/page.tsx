@@ -7,11 +7,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { supabase } from "../../../lib/supabaseClient";
+import { getFullPlayerData } from "@/utils/playerMock";
 
 export default function ProfilePage() {
   const context = useUser();
   const user = context !== "loading" ? context.user : null;
   const [avatarUrl, setAvatarUrl] = useState("/img/logo-mufel.jpeg");
+  const [points, setPoints] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: false, margin: "-100px" });
@@ -50,6 +52,26 @@ export default function ProfilePage() {
       }
     };
     fetchAvatar();
+  }, [user]);
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from("rankings")
+          .select("points")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error) {
+          console.error("Error obteniendo puntos:", error.message);
+        } else {
+          setPoints(data?.points ?? 0);
+        }
+      }
+    };
+
+    fetchPoints();
   }, [user]);
 
   const handleAvatarClick = () => {
@@ -120,25 +142,30 @@ export default function ProfilePage() {
     );
   }
 
+  const mock = getFullPlayerData(
+    user.id,
+    user.username,
+    avatarUrl,
+    points || 0
+  );
+
   const stats = {
-    level: 42,
-    rank: "Oro III",
+    level: mock.player.level,
+    rank: mock.rankedStats.rank,
     played: {
-      roguelike: 120,
-      plataformas: 85,
+      roguelike: mock.globalStats.expeditions, // o ajusta si quieres separar stats
+      plataformas: Math.floor(mock.globalStats.expeditions * 0.6), // ejemplo estimado
     },
   };
 
-  const latestMatches = [
-    { mode: "Roguelike", result: "Victoria", time: "4:32", date: "2025-03-30" },
-    {
-      mode: "Plataformas",
-      result: "Derrota",
-      time: "10:12",
-      date: "2025-03-29",
-    },
-    { mode: "Roguelike", result: "Victoria", time: "5:03", date: "2025-03-27" },
-  ];
+  const latestMatches = mock.matchHistory.map((m, idx) => ({
+    mode: idx % 2 === 0 ? "Roguelike" : "Plataformas",
+    result: m.outcome,
+    time: m.playtime,
+    date: `2025-03-${30 - idx}`,
+    kills: m.kills,
+    rooms: m.rooms,
+  }));
 
   const achievements = [
     "Completar el plataformas sin morir",
@@ -158,7 +185,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen pt-24 text-white bg-gradient-to-b from-gray-950 to-gray-900">
+    <div className="min-h-screen pt-24 text-white bg-gradient-to-b from-black via-gray-900 to-gray-950">
       <motion.div
         initial="hidden"
         animate={controls}
@@ -175,24 +202,26 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="bg-gray-800 rounded-2xl p-6 shadow-lg text-center space-y-4 border border-gray-700"
+            className="bg-gray-800 rounded-2xl p-6 shadow-lg text-left space-y-4 border border-gray-700 md:col-span-1 md:min-w-[280px] md:max-w-sm w-full"
           >
-            <div
-              className="relative inline-block cursor-pointer group"
-              onClick={handleAvatarClick}
-            >
-              <Image
-                src={avatarUrl}
-                alt="Avatar"
-                width={100}
-                height={100}
-                className="mx-auto rounded-full border-4 border-yellow-500 shadow-md group-hover:opacity-80"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="opacity-0 group-hover:opacity-100 transition text-xs text-white bg-yellow-600 px-2 py-1 rounded-full shadow">
-                  ✎ Editar Avatar
-                </span>
+            <div className="flex justify-center">
+              <div
+                className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-yellow-500 shadow-md group cursor-pointer"
+                onClick={handleAvatarClick}
+              >
+                <Image
+                  src={avatarUrl}
+                  alt="Avatar del jugador"
+                  fill
+                  className="object-cover transition-opacity duration-300"
+                />
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="text-xs text-white font-semibold">
+                    ✎ Editar
+                  </span>
+                </div>
               </div>
+
               <input
                 type="file"
                 accept="image/*"
@@ -201,20 +230,27 @@ export default function ProfilePage() {
                 className="hidden"
               />
             </div>
-            <p className="text-2xl font-semibold">{user.username}</p>
-            <hr className="border-gray-600 my-2" />
-            <p>
-              <strong>Nivel:</strong> {stats.level}
-            </p>
-            <p>
-              <strong>Rango:</strong> {stats.rank}
-            </p>
-            <p>
-              <strong>Roguelike:</strong> {stats.played.roguelike} partidas
-            </p>
-            <p>
-              <strong>Plataformas:</strong> {stats.played.plataformas} partidas
-            </p>
+
+            <ul className="space-y-2 text-base text-gray-300">
+              <li>
+                <strong>🏆 Nivel:</strong> {stats.level}
+              </li>
+              <li>
+                <strong>🎖️ Rango:</strong> {stats.rank}
+              </li>
+              <li>
+                <strong>🔥 Roguelike:</strong> {stats.played.roguelike} partidas
+              </li>
+              <li>
+                <strong>🧗 Plataformas:</strong> {stats.played.plataformas}{" "}
+                partidas
+              </li>
+              {points !== null && (
+                <li>
+                  <strong>💎 Puntos:</strong> {points}
+                </li>
+              )}
+            </ul>
           </motion.div>
 
           <motion.div
@@ -224,26 +260,37 @@ export default function ProfilePage() {
             className="md:col-span-2 bg-gray-800 rounded-2xl p-6 shadow-lg space-y-4 border border-gray-700"
           >
             <h2 className="text-2xl font-semibold mb-3">🕹️ Últimas partidas</h2>
+
             {latestMatches.map((match, idx) => (
               <div
                 key={idx}
-                className="bg-gray-900 p-4 rounded-lg border border-gray-700 flex justify-between items-center hover:bg-gray-800 transition"
+                className="bg-gray-900 p-4 rounded-xl border border-gray-700 flex flex-col md:flex-row justify-between items-center hover:border-yellow-500 transition"
               >
-                <div>
-                  <p className="font-bold">{match.mode}</p>
-                  <p className="text-sm text-gray-400">{match.date}</p>
-                </div>
-                <div className="text-right">
+                <div className="w-full md:w-1/2 mb-2 md:mb-0">
                   <p
-                    className={
+                    className={`font-semibold text-lg ${
                       match.result === "Victoria"
                         ? "text-green-400"
                         : "text-red-400"
-                    }
+                    }`}
                   >
                     {match.result}
                   </p>
-                  <p className="text-sm">{match.time}</p>
+                  <p className="text-sm text-gray-400">
+                    {match.mode} — {match.date}
+                  </p>
+                </div>
+
+                <div className="w-full md:w-1/2 flex flex-wrap justify-end gap-4 text-sm text-gray-300 text-right">
+                  <p>
+                    <strong>Tiempo:</strong> {match.time}
+                  </p>
+                  <p>
+                    <strong>Enemigos:</strong> {match.kills}
+                  </p>
+                  <p>
+                    <strong>Salas:</strong> {match.rooms}
+                  </p>
                 </div>
               </div>
             ))}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import Footer from "../../../components/ui/Footer";
 
 const NewsModal = dynamic(() => import("../../../components/news/NewsModal"));
 const NewsFilter = dynamic(() => import("../../../components/news/NewsFilter"));
@@ -46,7 +47,8 @@ export default function NewsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-32 px-6 pb-10">
+  <>
+    <div className="min-h-screen bg-gray-900 text-white pt-32 px-6">
       <div className="container mx-auto">
         <h1 className="text-4xl font-bold mb-6 text-center">📰 Últimas Noticias</h1>
 
@@ -82,5 +84,8 @@ export default function NewsPage() {
         <NewsModal news={selectedNews} onClose={() => setSelectedNews(null)} />
       )}
     </div>
-  );
+
+    <Footer />
+  </>
+);
 }

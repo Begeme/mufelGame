@@ -8,6 +8,7 @@ import { useChat } from "../../../context/ChatLayout";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import Footer from "../../../components/ui/Footer";
 
 interface UserBasic {
   id: string;
@@ -24,7 +25,7 @@ interface PendingRequest {
 export default function FriendsPage() {
   const context = useUser();
   const user = context !== "loading" ? context.user : null;
-  const { refreshFriends, openChat, unreadMessages } = useChat();
+  const { refreshFriends, unreadMessages } = useChat();
   const [friends, setFriends] = useState<UserBasic[]>([]);
   const [pendingReceived, setPendingReceived] = useState<PendingRequest[]>([]);
   const [pendingSent, setPendingSent] = useState<PendingRequest[]>([]);
@@ -50,14 +51,18 @@ export default function FriendsPage() {
       .eq("status", "accepted");
 
     const friendIds =
-      friendships?.map((f) => (f.user_id === user.id ? f.friend_id : f.user_id)) ?? [];
+      friendships?.map((f) =>
+        f.user_id === user.id ? f.friend_id : f.user_id
+      ) ?? [];
 
     const { data: friendsData } = await supabase
       .from("users")
       .select("id, username, is_online")
       .in("id", friendIds);
 
-    setFriends((friendsData || []).map((f) => ({ ...f, is_online: !!f.is_online })));
+    setFriends(
+      (friendsData || []).map((f) => ({ ...f, is_online: !!f.is_online }))
+    );
 
     const { data: received } = await supabase
       .from("friendships")
@@ -122,13 +127,30 @@ export default function FriendsPage() {
   }, [user, fetchFriends]);
 
   const handleAccept = async (id: number) => {
-    await supabase.from("friendships").update({ status: "accepted" }).eq("id", id);
+    await supabase
+      .from("friendships")
+      .update({ status: "accepted" })
+      .eq("id", id);
     await fetchFriends();
     await refreshFriends();
   };
 
   const handleReject = async (id: number) => {
     await supabase.from("friendships").delete().eq("id", id);
+    await fetchFriends();
+    await refreshFriends();
+  };
+
+  const handleUnfriend = async (friendId: string) => {
+    if (!user) return;
+
+    await supabase
+      .from("friendships")
+      .delete()
+      .or(
+        `and(user_id.eq.${user.id},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${user.id})`
+      );
+
     await fetchFriends();
     await refreshFriends();
   };
@@ -200,147 +222,258 @@ export default function FriendsPage() {
     );
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white pt-28 px-6 pb-16">
-      <motion.h1
-        className="text-4xl md:text-5xl font-bold mb-10 text-center"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        Tu Comunidad
-      </motion.h1>
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-950 text-white">
+      <main className="flex-grow pt-28 px-4 md:px-6 pb-16">
+        <motion.h1
+          className="text-4xl md:text-5xl font-bold mb-12 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Tu Comunidad
+        </motion.h1>
 
-      <div className="max-w-3xl mx-auto space-y-12">
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Buscar jugadores</h2>
-          <div className="flex gap-3">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 gap-10">
+          {/* Buscar jugadores */}
+          <section className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">🔍 Buscar jugadores</h2>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Introduce un nombre de usuario"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              />
+              <Button onClick={handleSearch} className="cursor-pointer">
+                Buscar
+              </Button>
+            </div>
+
+            <AnimatePresence>
+              {searchResults.length > 0 && (
+                <motion.ul
+                  key="search-list"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-6 space-y-3"
+                >
+                  {searchResults.map((u) => (
+                    <motion.li
+                      key={u.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="bg-gray-900 border border-gray-700 rounded-lg p-4 flex justify-between items-center hover:border-yellow-500 transition"
+                    >
+                      <span>{u.username}</span>
+                      <Button onClick={() => sendFriendRequest(u.id)}>
+                        Agregar
+                      </Button>
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </section>
+
+          {/* Lista de amigos */}
+          <section className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">👥 Tus amigos</h2>
             <input
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Introduce un nombre de usuario"
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              value={friendSearch}
+              onChange={(e) => setFriendSearch(e.target.value)}
+              placeholder="Buscar entre tus amigos"
+              className="w-full px-4 py-2 mb-6 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
-            <Button onClick={handleSearch}>Buscar</Button>
-          </div>
 
-          <AnimatePresence>
-            {searchResults.length > 0 && (
-              <motion.ul
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="mt-6 space-y-3"
-              >
-                {searchResults.map((u) => (
-                  <li
-                    key={u.id}
-                    className="bg-gray-800 p-4 rounded-lg flex justify-between items-center border border-gray-700 hover:border-yellow-500 transition"
-                  >
-                    <span>{u.username}</span>
-                    <Button onClick={() => sendFriendRequest(u.id)}>Agregar</Button>
-                  </li>
-                ))}
-              </motion.ul>
-            )}
-          </AnimatePresence>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Amigos</h2>
-          <input
-            type="text"
-            value={friendSearch}
-            onChange={(e) => setFriendSearch(e.target.value)}
-            placeholder="Buscar entre tus amigos"
-            className="w-full px-4 py-2 mb-6 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
-
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">🟢 En línea</h3>
-              <div className="grid gap-4">
-                {onlineFriends.map((f) => (
-                  <motion.div
-                    key={f.id}
-                    whileHover={{ scale: 1.01 }}
-                    className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-yellow-500 transition cursor-pointer"
-                    onClick={() => openChat(f)}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{f.username}</span>
-                      {unreadMessages[f.id] > 0 && (
-                        <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                          {unreadMessages[f.id] > 99 ? "99+" : unreadMessages[f.id]}
-                        </span>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">⚫ Desconectados</h3>
-              <div className="grid gap-4">
-                {offlineFriends.map((f) => (
-                  <motion.div
-                    key={f.id}
-                    whileHover={{ scale: 1.01 }}
-                    className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-gray-500 transition cursor-pointer"
-                    onClick={() => openChat(f)}
-                  >
-                    <span>{f.username}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Solicitudes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-3">📥 Recibidas</h3>
-              <div className="space-y-3">
-                {pendingReceived.length === 0 ? (
-                  <p className="text-gray-400">Sin solicitudes</p>
-                ) : (
-                  pendingReceived.map((p) => (
-                    <div
-                      key={p.id}
-                      className="bg-gray-800 p-3 rounded-lg flex justify-between items-center border border-gray-700"
-                    >
-                      <span>{p.user_id.username}</span>
-                      <div className="flex gap-2">
-                        <Button onClick={() => handleAccept(p.id)} className="px-3 py-1 text-sm bg-green-600 hover:bg-green-500 text-white rounded-md">Aceptar</Button>
-                        <Button onClick={() => handleReject(p.id)} className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded-md">Rechazar</Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* En línea */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-green-400">
+                  🟢 En línea
+                </h3>
+                <div className="space-y-3">
+                  {onlineFriends.length > 0 ? (
+                    onlineFriends.map((f) => (
+                      <div
+                        key={f.id}
+                        className="bg-gray-900 border border-gray-700 hover:border-yellow-500 rounded-lg p-4"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{f.username}</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() =>
+                                router.push(`/perfil/${f.username}`)
+                              }
+                              title="Ver perfil"
+                              className="hover:text-blue-400 text-white text-base transition-colors cursor-pointer"
+                            >
+                              👤
+                            </button>
+                            <button
+                              onClick={() => handleUnfriend(f.id)}
+                              title="Eliminar amigo"
+                              className="hover:text-red-500 text-white text-base transition-colors cursor-pointer"
+                            >
+                              ❌
+                            </button>
+                          </div>
+                        </div>
+                        {unreadMessages[f.id] > 0 && (
+                          <div className="text-right mt-2">
+                            <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                              {unreadMessages[f.id] > 99
+                                ? "99+"
+                                : unreadMessages[f.id]}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))
-                )}
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-sm">Nadie en línea</p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <h3 className="text-lg font-semibold mb-3">📤 Enviadas</h3>
-              <div className="space-y-3">
-                {pendingSent.length === 0 ? (
-                  <p className="text-gray-400">No has enviado solicitudes</p>
-                ) : (
-                  pendingSent.map((p) => (
-                    <div key={p.id} className="bg-gray-800 p-3 rounded-lg border border-gray-700">
-                      <span>{p.friend_id.username}</span>
-                      <span className="ml-2 text-yellow-500 text-sm">(pendiente)</span>
-                    </div>
-                  ))
-                )}
+              {/* Desconectados */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-gray-400">
+                  ⚫ Desconectados
+                </h3>
+                <div className="space-y-3">
+                  {offlineFriends.length > 0 ? (
+                    offlineFriends.map((f) => (
+                      <div
+                        key={f.id}
+                        className="bg-gray-900 border border-gray-700 hover:border-yellow-500 rounded-lg p-4"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{f.username}</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() =>
+                                router.push(`/perfil/${f.username}`)
+                              }
+                              title="Ver perfil"
+                              className="hover:text-blue-400 text-white text-base transition-colors cursor-pointer"
+                            >
+                              👤
+                            </button>
+                            <button
+                              onClick={() => handleUnfriend(f.id)}
+                              title="Eliminar amigo"
+                              className="hover:text-red-500 text-white text-base transition-colors cursor-pointer"
+                            >
+                              ❌
+                            </button>
+                          </div>
+                        </div>
+                        {unreadMessages[f.id] > 0 && (
+                          <div className="text-right mt-2">
+                            <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                              {unreadMessages[f.id] > 99
+                                ? "99+"
+                                : unreadMessages[f.id]}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-sm">
+                      Todos están conectados 🎉
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      </div>
-    </main>
+          </section>
+
+          {/* Solicitudes de amistad */}
+          <section className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-lg">
+            <h2 className="text-2xl font-bold mb-6">
+              📨 Solicitudes de amistad
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Recibidas */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">📥 Recibidas</h3>
+                <div className="space-y-3">
+                  {pendingReceived.length > 0 ? (
+                    pendingReceived.map((p) => (
+                      <div
+                        key={p.id}
+                        className="bg-gray-900 border border-gray-700 rounded-lg p-3 flex justify-between items-center"
+                      >
+                        <span>{p.user_id.username}</span>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleAccept(p.id)}
+                            title="Aceptar"
+                            className="hover:text-green-400 text-lg"
+                          >
+                            ✅
+                          </button>
+                          <button
+                            onClick={() => handleReject(p.id)}
+                            title="Rechazar"
+                            className="hover:text-red-500 text-white text-base transition-colors cursor-pointer"
+                          >
+                            ❌
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400">
+                      No tienes solicitudes nuevas
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Enviadas */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">📤 Enviadas</h3>
+                <div className="space-y-3">
+                  {pendingSent.length > 0 ? (
+                    pendingSent.map((p) => (
+                      <div
+                        key={p.id}
+                        className="bg-gray-900 border border-gray-700 rounded-lg p-3 flex justify-between items-center"
+                      >
+                        <div>
+                          <span>{p.friend_id.username}</span>
+                          <span className="ml-2 text-yellow-500 text-sm">
+                            (pendiente)
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleReject(p.id)}
+                          title="Cancelar solicitud"
+                          className="hover:text-red-500 text-white text-base transition-colors cursor-pointer"
+                        >
+                          ❌
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400">No has enviado solicitudes</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 }

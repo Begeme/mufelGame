@@ -1,81 +1,66 @@
-// src/app/download/page.tsx
 "use client";
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useUser } from "../../../context/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function DownloadPage() {
+  const context = useUser();
+  const user = context !== "loading" ? context.user : null;
+  const router = useRouter();
+
   useEffect(() => {
+    if (typeof window === "undefined") return;
     document.title = "Descargar | MufelGame";
-  }, []);
+
+    if (!user && context !== "loading") {
+      router.push("/login");
+    }
+  }, [user, context, router]);
+
+  if (context === "loading") return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <p>Redirigiendo al login...</p>
+      </div>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white px-6 py-20 flex flex-col items-center">
-      <motion.h1
-        className="text-4xl md:text-5xl font-bold mb-6 text-center"
-        initial={{ opacity: 0, y: -20 }}
+    <main className="min-h-screen bg-gradient-to-br from-black to-gray-900 text-white pt-32 px-6 py-20 flex flex-col items-center">
+      <motion.div
+        initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-12"
       >
-        Descarga MufelGame
-      </motion.h1>
-
-      <motion.p
-        className="text-gray-300 max-w-xl text-center mb-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-      >
-        Prepárate para comenzar tu aventura en el infierno con Mufel. Descarga el juego para tu plataforma preferida.
-      </motion.p>
-
-      <div className="flex flex-col md:flex-row gap-6">
-        <DownloadCard
-          platform="Windows"
-          description="Disponible para Windows 10 y superiores"
-          downloadLink="/downloads/mufelgame-windows.exe"
-          icon="/img/logo-sin-fondo.png"
+        <Image
+          src="/img/logo-sin-fondo.png"
+          alt="MufelGame logo"
+          width={96}
+          height={96}
+          className="mx-auto mb-4"
         />
-        <DownloadCard
-          platform="MacOS"
-          description="Compatible con MacOS 11+ (Intel & M1)"
-          downloadLink="/downloads/mufelgame-mac.dmg"
-          icon="/img/logo-sin-fondo.png"
-        />
-      </div>
-    </main>
-  );
-}
+        <h1 className="text-5xl font-extrabold tracking-tight mb-4">
+          Descarga MufelGame
+        </h1>
+        <p className="text-gray-300 max-w-2xl mx-auto text-lg">
+          Empieza tu viaje en el infierno con la versión más reciente de
+          MufelGame. ¡Haz clic abajo para comenzar la descarga!
+        </p>
+      </motion.div>
 
-function DownloadCard({
-  platform,
-  description,
-  downloadLink,
-  icon,
-}: {
-  platform: string;
-  description: string;
-  downloadLink: string;
-  icon: string;
-}) {
-  return (
-    <motion.div
-      className="bg-gray-800 rounded-xl p-6 w-full max-w-xs text-center border border-gray-700 hover:border-yellow-500 transition"
-      whileHover={{ scale: 1.03 }}
-    >
-      <div className="flex justify-center mb-4">
-        <Image src={icon} alt={`${platform} icon`} width={48} height={48} />
-      </div>
-      <h2 className="text-xl font-bold mb-2">{platform}</h2>
-      <p className="text-gray-400 text-sm mb-4">{description}</p>
-      <a
-        href={downloadLink}
-        className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-5 py-2 rounded-lg transition"
+      <motion.a
+        href="/downloads/mufelgame.zip"
         download
+        whileHover={{ scale: 1.05 }}
+        className="bg-yellow-500 hover:bg-yellow-400 !text-black font-bold text-lg px-8 py-4 rounded-xl shadow-lg transition no-underline"
       >
-        Descargar
-      </a>
-    </motion.div>
+        Descargar Juego
+      </motion.a>
+    </main>
   );
 }

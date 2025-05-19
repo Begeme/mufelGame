@@ -2,7 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['example.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'eadfhzxijvqvcpesrrht.supabase.co',
+        pathname: '/storage/v1/object/public/avatars/**',
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,

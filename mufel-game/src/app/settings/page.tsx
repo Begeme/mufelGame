@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../../context/UserContext";
 import Footer from "../../../components/ui/Footer";
-
+import { useRouter } from "next/navigation";
 import ProfileSettings from "../../../components/settings/ProfileSettings";
 import NotificationSettings from "../../../components/settings/NotificationSettings";
 import SecuritySettings from "../../../components/settings/SecuritySettings";
@@ -24,6 +24,14 @@ export default function SettingsPage() {
 
   const [activeSection, setActiveSection] = useState("profile");
   const [isFocused, setIsFocused] = useState(false); // flecha toggle
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user && context !== "loading") {
+      router.push("/login");
+    }
+  }, [user, context, router]);
 
   useEffect(() => {
     const handleScroll = () => {

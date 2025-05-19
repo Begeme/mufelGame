@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+
+import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "../../../lib/supabaseClient";
 import { useUser } from "../../../context/UserContext";
 import { Button } from "../../../components/ui/Button";
 import { useChat } from "../../../context/ChatLayout";
-import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 interface UserBasic {
@@ -29,9 +31,14 @@ export default function FriendsPage() {
   const [searchResults, setSearchResults] = useState<UserBasic[]>([]);
   const [search, setSearch] = useState("");
   const [friendSearch, setFriendSearch] = useState("");
-  const [showOnline, setShowOnline] = useState(true);
-  const [showOffline, setShowOffline] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user && context !== "loading") {
+      router.push("/login");
+    }
+  }, [user, context, router]);
 
   const fetchFriends = useCallback(async () => {
     if (!user) return;
@@ -43,18 +50,14 @@ export default function FriendsPage() {
       .eq("status", "accepted");
 
     const friendIds =
-      friendships?.map((f) =>
-        f.user_id === user.id ? f.friend_id : f.user_id
-      ) ?? [];
+      friendships?.map((f) => (f.user_id === user.id ? f.friend_id : f.user_id)) ?? [];
 
     const { data: friendsData } = await supabase
       .from("users")
       .select("id, username, is_online")
       .in("id", friendIds);
 
-    setFriends(
-      (friendsData || []).map((f) => ({ ...f, is_online: !!f.is_online }))
-    );
+    setFriends((friendsData || []).map((f) => ({ ...f, is_online: !!f.is_online })));
 
     const { data: received } = await supabase
       .from("friendships")
@@ -119,10 +122,7 @@ export default function FriendsPage() {
   }, [user, fetchFriends]);
 
   const handleAccept = async (id: number) => {
-    await supabase
-      .from("friendships")
-      .update({ status: "accepted" })
-      .eq("id", id);
+    await supabase.from("friendships").update({ status: "accepted" }).eq("id", id);
     await fetchFriends();
     await refreshFriends();
   };
@@ -191,168 +191,156 @@ export default function FriendsPage() {
   const onlineFriends = filteredFriends.filter((f) => f.is_online);
   const offlineFriends = filteredFriends.filter((f) => !f.is_online);
 
-  if (!user) return <div className="p-4">Cargando usuario...</div>;
+  if (context === "loading") return null;
+  if (!user)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Redirigiendo al login...
+      </div>
+    );
 
   return (
-    <div className="pt-24 p-6 max-w-3xl mx-auto space-y-10 text-white">
-      <section>
-        <h2 className="text-xl font-semibold mb-1">Agrega a tus amigos</h2>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre de usuario"
-            className="px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-md w-full"
-          />
-          <Button onClick={handleSearch}>Buscar</Button>
-        </div>
-        {searchResults.length > 0 && (
-          <ul className="mt-4 space-y-2">
-            {searchResults.map((u) => (
-              <li
-                key={u.id}
-                className="bg-gray-800 rounded-xl p-3 shadow flex justify-between items-center"
+    <main className="min-h-screen bg-gray-950 text-white pt-28 px-6 pb-16">
+      <motion.h1
+        className="text-4xl md:text-5xl font-bold mb-10 text-center"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        Tu Comunidad
+      </motion.h1>
+
+      <div className="max-w-3xl mx-auto space-y-12">
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Buscar jugadores</h2>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Introduce un nombre de usuario"
+              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            />
+            <Button onClick={handleSearch}>Buscar</Button>
+          </div>
+
+          <AnimatePresence>
+            {searchResults.length > 0 && (
+              <motion.ul
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mt-6 space-y-3"
               >
-                <span className="text-white">{u.username}</span>
-                <Button onClick={() => sendFriendRequest(u.id)}>Agregar</Button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h1 className="text-3xl font-bold">👥 Amigos</h1>
-        <input
-          type="text"
-          value={friendSearch}
-          onChange={(e) => setFriendSearch(e.target.value)}
-          placeholder="Buscar entre tus amigos"
-          className="my-3 px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-md w-full"
-        />
-        <div className="space-y-3">
-          <div>
-            <button
-              onClick={() => setShowOnline((prev) => !prev)}
-              className="text-left text-yellow-400 font-semibold mb-1"
-            >
-              {showOnline ? "▼" : "▶"} Amigos en línea
-            </button>
-            {showOnline && (
-              <div className="max-h-60 overflow-y-auto grid gap-4 scrollbar-thin scrollbar-thumb-gray-700">
-                {onlineFriends.map((f) => (
-                  <div
-                    key={f.id}
-                    className="bg-gray-800 p-4 rounded-xl shadow flex justify-between items-center hover:bg-gray-700 transition cursor-pointer"
-                    onClick={() => openChat(f)}
+                {searchResults.map((u) => (
+                  <li
+                    key={u.id}
+                    className="bg-gray-800 p-4 rounded-lg flex justify-between items-center border border-gray-700 hover:border-yellow-500 transition"
                   >
-                    <div className="flex flex-col">
-                      <span className="text-lg font-semibold">
-                        {f.username}
-                      </span>
-                      <span className="text-xs text-green-400">● Online</span>
-                    </div>
-                    {unreadMessages[f.id] > 0 && (
-                      <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                        {unreadMessages[f.id] > 99
-                          ? "99+"
-                          : unreadMessages[f.id]}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <button
-              onClick={() => setShowOffline((prev) => !prev)}
-              className="text-left text-yellow-400 font-semibold mb-1"
-            >
-              {showOffline ? "▼" : "▶"} Amigos desconectados
-            </button>
-            {showOffline && (
-              <div className="max-h-60 overflow-y-auto grid gap-4 scrollbar-thin scrollbar-thumb-gray-700">
-                {offlineFriends.map((f) => (
-                  <div
-                    key={f.id}
-                    className="bg-gray-800 p-4 rounded-xl shadow flex justify-between items-center hover:bg-gray-700 transition cursor-pointer"
-                    onClick={() => openChat(f)}
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-lg font-semibold">
-                        {f.username}
-                      </span>
-                      <span className="text-xs text-gray-400">● Offline</span>
-                    </div>
-                    {unreadMessages[f.id] > 0 && (
-                      <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                        {unreadMessages[f.id] > 99
-                          ? "99+"
-                          : unreadMessages[f.id]}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold mb-3">Solicitudes</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-800 rounded-xl p-4 shadow">
-            <h3 className="text-lg font-medium mb-2">📥 Recibidas</h3>
-            {pendingReceived.length === 0 ? (
-              <p className="text-gray-400">Sin solicitudes</p>
-            ) : (
-              <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700">
-                {pendingReceived.map((p) => (
-                  <div
-                    key={p.id}
-                    className="bg-gray-700 p-3 rounded-lg flex justify-between items-center"
-                  >
-                    <span>{p.user_id.username}</span>
-                    <div className="flex gap-2">
-                      <Button onClick={() => handleAccept(p.id)}>
-                        Aceptar
-                      </Button>
-                      <Button
-                        onClick={() => handleReject(p.id)}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Rechazar
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-gray-800 rounded-xl p-4 shadow">
-            <h3 className="text-lg font-medium mb-2">📤 Enviadas</h3>
-            {pendingSent.length === 0 ? (
-              <p className="text-gray-400">No has enviado solicitudes</p>
-            ) : (
-              <ul className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700">
-                {pendingSent.map((p) => (
-                  <li key={p.id} className="bg-gray-700 p-3 rounded-lg">
-                    <span>{p.friend_id.username}</span>
-                    <span className="text-yellow-400 text-sm ml-2">
-                      (pendiente)
-                    </span>
+                    <span>{u.username}</span>
+                    <Button onClick={() => sendFriendRequest(u.id)}>Agregar</Button>
                   </li>
                 ))}
-              </ul>
+              </motion.ul>
             )}
+          </AnimatePresence>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Amigos</h2>
+          <input
+            type="text"
+            value={friendSearch}
+            onChange={(e) => setFriendSearch(e.target.value)}
+            placeholder="Buscar entre tus amigos"
+            className="w-full px-4 py-2 mb-6 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          />
+
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">🟢 En línea</h3>
+              <div className="grid gap-4">
+                {onlineFriends.map((f) => (
+                  <motion.div
+                    key={f.id}
+                    whileHover={{ scale: 1.01 }}
+                    className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-yellow-500 transition cursor-pointer"
+                    onClick={() => openChat(f)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{f.username}</span>
+                      {unreadMessages[f.id] > 0 && (
+                        <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                          {unreadMessages[f.id] > 99 ? "99+" : unreadMessages[f.id]}
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-2">⚫ Desconectados</h3>
+              <div className="grid gap-4">
+                {offlineFriends.map((f) => (
+                  <motion.div
+                    key={f.id}
+                    whileHover={{ scale: 1.01 }}
+                    className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-gray-500 transition cursor-pointer"
+                    onClick={() => openChat(f)}
+                  >
+                    <span>{f.username}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Solicitudes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-3">📥 Recibidas</h3>
+              <div className="space-y-3">
+                {pendingReceived.length === 0 ? (
+                  <p className="text-gray-400">Sin solicitudes</p>
+                ) : (
+                  pendingReceived.map((p) => (
+                    <div
+                      key={p.id}
+                      className="bg-gray-800 p-3 rounded-lg flex justify-between items-center border border-gray-700"
+                    >
+                      <span>{p.user_id.username}</span>
+                      <div className="flex gap-2">
+                        <Button onClick={() => handleAccept(p.id)} className="px-3 py-1 text-sm bg-green-600 hover:bg-green-500 text-white rounded-md">Aceptar</Button>
+                        <Button onClick={() => handleReject(p.id)} className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded-md">Rechazar</Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-3">📤 Enviadas</h3>
+              <div className="space-y-3">
+                {pendingSent.length === 0 ? (
+                  <p className="text-gray-400">No has enviado solicitudes</p>
+                ) : (
+                  pendingSent.map((p) => (
+                    <div key={p.id} className="bg-gray-800 p-3 rounded-lg border border-gray-700">
+                      <span>{p.friend_id.username}</span>
+                      <span className="ml-2 text-yellow-500 text-sm">(pendiente)</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }

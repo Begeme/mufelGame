@@ -7,9 +7,9 @@ export default function AccountSettings() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
-  };
+  await supabase.auth.signOut();
+  router.push("/");
+};
 
   const handleDeleteAccount = async () => {
     const confirm = window.confirm(

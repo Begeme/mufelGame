@@ -1,73 +1,49 @@
 "use client";
-import { useState } from "react";
 
-const rankings = {
-  plataformas: [
-    { nombre: "ShadowKiller", puntos: 9820 },
-    { nombre: "DragonMaster", puntos: 9450 },
-    { nombre: "PhoenixRise", puntos: 9200 },
-    { nombre: "LegendX", puntos: 8800 },
-    { nombre: "NightHawk", puntos: 8600 },
-  ],
-  roguelike: [
+export default function Ranking() {
+  const rankingRoguelike = [
     { nombre: "RogueKing", puntos: 15000 },
     { nombre: "DarkHunter", puntos: 14200 },
     { nombre: "NightSlayer", puntos: 13800 },
     { nombre: "UndeadWarrior", puntos: 13500 },
     { nombre: "PhantomBlade", puntos: 12900 },
-  ],
-};
-
-export default function Ranking() {
-  const [selectedMode, setSelectedMode] = useState<"plataformas" | "roguelike">(
-    "plataformas"
-  );
+    { nombre: "BloodReaper", puntos: 12400 },
+    { nombre: "GhostFury", puntos: 11900 },
+    { nombre: "HellWalker", puntos: 11300 },
+    { nombre: "GrimSoul", puntos: 11000 },
+    { nombre: "DreadKnight", puntos: 10700 },
+  ];
 
   return (
-    <section className="bg-gray-800 py-10">
-      <div className="container mx-auto text-center text-white">
-        <h2 className="text-3xl font-bold mb-6">Ranking de Jugadores</h2>
+    <section className="bg-gray-950 py-16 border-t border-gray-800">
+      <div className="max-w-4xl mx-auto px-4 text-white">
+        <h2 className="text-4xl font-bold text-center mb-10 text-yellow-400">
+          🏆 Top 10 Roguelike
+        </h2>
 
-        <div className="flex justify-center space-x-6 mb-6">
-          <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
-              selectedMode === "plataformas"
-                ? "bg-yellow-500 text-black scale-105"
-                : "bg-gray-700 hover:bg-yellow-400"
-            }`}
-            onClick={() => setSelectedMode("plataformas")}
-          >
-            Plataformas
-          </button>
-
-          <button
-            className={`px-6 py-3 text-lg font-bold rounded-lg transition duration-300 cursor-pointer transform ${
-              selectedMode === "roguelike"
-                ? "bg-yellow-500 text-black scale-105"
-                : "bg-gray-700 hover:bg-yellow-400"
-            }`}
-            onClick={() => setSelectedMode("roguelike")}
-          >
-            Roguelike
-          </button>
-        </div>
-
-        <div className="w-full max-w-lg mx-auto bg-gray-700 p-6 rounded-lg shadow-lg">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-gray-500">
-                <th className="py-2">#</th>
-                <th className="py-2">Jugador</th>
-                <th className="py-2 text-right">Puntos</th>
+        <div className="overflow-hidden rounded-2xl shadow-lg border border-gray-700 bg-gray-800">
+          <table className="w-full text-sm sm:text-base">
+            <thead className="bg-gray-900 text-yellow-500">
+              <tr>
+                <th className="px-4 py-3 text-left">#</th>
+                <th className="px-4 py-3 text-left">Jugador</th>
+                <th className="px-4 py-3 text-right">Puntos</th>
               </tr>
             </thead>
             <tbody>
-              {rankings[selectedMode].map((jugador, index) => (
-                <tr key={index} className="border-b border-gray-600">
-                  <td className="py-2">{index + 1}</td>
-                  <td className="py-2">{jugador.nombre}</td>
-                  <td className="py-2 text-right text-yellow-400">
-                    {jugador.puntos}
+              {rankingRoguelike.map((jugador, index) => (
+                <tr
+                  key={index}
+                  className={`border-b border-gray-700 ${
+                    index === 0
+                      ? "bg-yellow-500 text-black font-bold"
+                      : "hover:bg-gray-700 transition"
+                  }`}
+                >
+                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3">{jugador.nombre}</td>
+                  <td className="px-4 py-3 text-right text-yellow-400">
+                    {jugador.puntos.toLocaleString()}
                   </td>
                 </tr>
               ))}

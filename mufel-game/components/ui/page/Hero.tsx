@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import PlayModal from "../PlayModal";
+import { motion } from "framer-motion";
 
 export default function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,12 +24,19 @@ export default function Hero() {
         <p className="mt-4 text-lg animate-fadeIn delay-200">
           Únete a la acción y demuestra tu habilidad.
         </p>
-        <button
+        <motion.button
           className="mt-6 bg-yellow-500 text-black px-6 py-3 rounded-lg text-xl font-bold hover:bg-yellow-400 transition duration-300 cursor-pointer"
           onClick={() => setIsModalOpen(true)}
+          animate={{ scale: [1, 1.08, 1], opacity: [1, 0.8, 1] }}
+          transition={{
+            duration: 0.8,
+            repeat: Infinity,
+            repeatDelay: 3,
+            ease: "easeInOut",
+          }}
         >
           Jugar Gratis
-        </button>
+        </motion.button>
       </div>
       <PlayModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>

@@ -1,35 +1,61 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ItemCarrito, useCart } from "../../context/CartContext";
 import { FiX } from "react-icons/fi";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import type { Producto, Variante } from "@/data/productos";
+import { ItemCarrito, useCart } from "../../context/CartContext";
 
-const tallas = ["XS", "S", "M", "L", "XL"];
-const colores = ["#000000", "#ff0000", "#0000ff", "#008000", "#ffffff"];
+const colorToHex = (color: string) => {
+  switch (color.toLowerCase()) {
+    case "negro": return "#000000";
+    case "blanco": return "#ffffff";
+    case "rojo": return "#ff0000";
+    case "azul": return "#0000ff";
+    case "amarillo": return "#ffff00";
+    default: return "#777";
+  }
+};
 
 export default function EditarProductoModal({
   item,
+  producto,
   onClose,
 }: {
   item: ItemCarrito;
+  producto: Producto;
   onClose: () => void;
 }) {
   const { eliminarProducto, agregarProducto } = useCart();
-  const [color, setColor] = useState(item.color);
-  const [talla, setTalla] = useState(item.talla || "M");
+  const esUnico = producto.tipoOpciones === "unico";
+  const soloTalla = producto.tipoOpciones === "talla";
+
+  const [colorSeleccionado, setColorSeleccionado] = useState<Variante>(
+    producto.variantes.find(v => v.color === item.color) || producto.variantes[0]
+  );
+  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>(item.talla || "M");
+  const [imagenSeleccionada, setImagenSeleccionada] = useState<string>(
+    colorSeleccionado.imagenes[0]
+  );
   const [cantidad, setCantidad] = useState(item.cantidad);
 
   const handleGuardar = () => {
     eliminarProducto(item.id);
 
+    const id = soloTalla
+      ? `${producto.id}-${tallaSeleccionada}`
+      : `${producto.id}-${colorSeleccionado.color}-${tallaSeleccionada}`;
+
     agregarProducto({
-      ...item,
-      id: `${item.id.split("-")[0]}-${color}-${talla}`,
-      color,
-      talla,
+      id,
+      nombre: producto.nombre,
+      imagen: imagenSeleccionada,
+      precio: colorSeleccionado.precio,
       cantidad,
+      color: colorSeleccionado.color,
+      talla: tallaSeleccionada,
     });
 
     toast.success("Cambios guardados", {
@@ -46,7 +72,7 @@ export default function EditarProductoModal({
   };
 
   const handleCantidadChange = (delta: number) => {
-    setCantidad((prev) => Math.max(1, prev + delta));
+    setCantidad(prev => Math.max(1, prev + delta));
   };
 
   return (
@@ -59,68 +85,88 @@ export default function EditarProductoModal({
         <button
           onClick={onClose}
           className="absolute top-3 right-4 text-white text-2xl hover:text-red-400"
-          title="Cerrar sin guardar"
         >
           <FiX />
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Imagen */}
           <div className="w-full h-[300px] relative">
             <Image
-              src={item.imagen}
-              alt={item.nombre}
+              src={imagenSeleccionada}
+              alt={producto.nombre}
               fill
               className="object-contain rounded-md"
             />
           </div>
 
-          {/* Info */}
           <div className="text-white">
             <h2 className="text-2xl font-bold mb-4 text-center md:text-left">
-              Editar {item.nombre}
+              Editar {producto.nombre}
             </h2>
 
-            {/* Color */}
-            <div className="mb-4">
-              <p className="font-semibold mb-2">Color:</p>
-              <div className="flex gap-3 flex-wrap">
-                {colores.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setColor(c)}
-                    className={`w-10 h-10 rounded-full border-2 transition ${
-                      color === c
-                        ? "border-yellow-400"
-                        : "border-gray-600 hover:border-yellow-400"
-                    }`}
-                    style={{ backgroundColor: c }}
-                  />
-                ))}
-              </div>
-            </div>
+            <p className="text-xl text-yellow-400 font-bold mb-4">
+              {colorSeleccionado.precio.toFixed(2)} €
+            </p>
 
-            {/* Talla */}
-            <div className="mb-4">
-              <p className="font-semibold mb-2">Talla:</p>
-              <div className="flex gap-3 flex-wrap">
-                {tallas.map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTalla(t)}
-                    className={`w-10 h-10 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition ${
-                      talla === t
-                        ? "bg-white text-black border-white"
-                        : "text-white border-gray-600 hover:border-white"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {!esUnico && (
+              <>
+                {!soloTalla && (
+                  <div className="mb-4">
+                    <p className="font-semibold mb-2">Color:</p>
+                    <div className="flex gap-3 flex-wrap">
+                      {producto.variantes.map((v) => (
+                        <button
+                          key={v.color}
+                          onClick={() => {
+                            setColorSeleccionado(v);
+                            setImagenSeleccionada(v.imagenes[0]);
+                          }}
+                          className={`w-10 h-10 rounded-full border-2 transition cursor-pointer ${
+                            colorSeleccionado.color === v.color
+                              ? "border-yellow-400"
+                              : "border-gray-600 hover:border-yellow-400"
+                          }`}
+                          style={{ backgroundColor: colorToHex(v.color) }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            {/* Cantidad */}
+                {(producto.tipoOpciones === "completo" || soloTalla) && producto.tallas && (
+                  <div className="mb-4">
+                    <p className="font-semibold mb-2">Talla:</p>
+                    <div className="flex gap-3 flex-wrap">
+                      {producto.tallas.map((t) => (
+                        <button
+                          key={t}
+                          onClick={() => {
+                            setTallaSeleccionada(t);
+                            if (soloTalla) {
+                              const variante = producto.variantes.find(
+                                (v) => v.color.toLowerCase() === t.toLowerCase()
+                              );
+                              if (variante) {
+                                setColorSeleccionado(variante);
+                                setImagenSeleccionada(variante.imagenes[0]);
+                              }
+                            }
+                          }}
+                          className={`w-10 h-10 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition cursor-pointer ${
+                            tallaSeleccionada === t
+                              ? "bg-white text-black border-white"
+                              : "text-white border-gray-600 hover:border-white"
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
             <div className="mb-4">
               <p className="font-semibold mb-2">Cantidad:</p>
               <div className="flex items-center border border-gray-600 rounded overflow-hidden w-32">
@@ -142,7 +188,6 @@ export default function EditarProductoModal({
               </div>
             </div>
 
-            {/* Guardar */}
             <button
               onClick={handleGuardar}
               className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 rounded transition"

@@ -10,6 +10,7 @@ import MatchHistory from "../../../components/tracker/MatchHistory";
 import SidebarStats from "../../../components/tracker/SidebarStats";
 import Footer from "../../../components/ui/Footer";
 import { getFullPlayerData } from "@/utils/playerMock";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Player {
   avatar: string;
@@ -111,7 +112,12 @@ export default function TrackerPage() {
   return (
     <div className="min-h-screen pt-32 bg-gradient-to-b from-black via-gray-900 to-gray-950 text-white">
       <div className="container mx-auto px-4 py-10 pb-24 flex-grow">
-        <div className="flex flex-col items-center mb-8">
+        <motion.div
+          className="flex flex-col items-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <h1 className="text-4xl font-bold mb-4">
             🏆 Clasificación de Expedicionistas
           </h1>
@@ -120,35 +126,52 @@ export default function TrackerPage() {
             perfil para ver tu progreso.
           </p>
           <SearchBar onSearch={handleSearch} />
-        </div>
+        </motion.div>
 
-        {playerData && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="md:col-span-1">
-              <PlayerInfo player={playerData.player} />
-              <SidebarStats stats={playerData.globalStats} />
-            </div>
-            <div className="md:col-span-2 space-y-6">
-              <RankedStats stats={playerData.rankedStats} />
-              <MatchHistory matches={playerData.matchHistory} />
-            </div>
-          </div>
-        )}
-
-        {!playerData && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {topPlayers.map((player, idx) => (
-              <div
-                key={idx}
-                className="bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-700"
-              >
-                <PlayerInfo player={player.player} />
-                <SidebarStats stats={player.globalStats} />
-                <RankedStats stats={player.rankedStats} />
+        <AnimatePresence mode="wait">
+          {playerData ? (
+            <motion.div
+              key="playerData"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+            >
+              <div className="md:col-span-1">
+                <PlayerInfo player={playerData.player} />
+                <SidebarStats stats={playerData.globalStats} />
               </div>
-            ))}
-          </div>
-        )}
+              <div className="md:col-span-2 space-y-6">
+                <RankedStats stats={playerData.rankedStats} />
+                <MatchHistory matches={playerData.matchHistory} />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="topPlayers"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
+              {topPlayers.map((player, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.1 }}
+                  className="bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-700"
+                >
+                  <PlayerInfo player={player.player} />
+                  <SidebarStats stats={player.globalStats} />
+                  <RankedStats stats={player.rankedStats} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <Footer />
     </div>

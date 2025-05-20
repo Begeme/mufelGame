@@ -68,7 +68,7 @@ export default function SettingsPage() {
   if (!user) return <div className="p-6 text-white">Cargando usuario...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white pt-20">
+    <div className="min-h-screen pt-32 bg-gradient-to-b from-black via-gray-900 to-gray-950 text-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="block md:hidden sticky top-16 z-30 bg-gray-950 py-3">
           <div className="relative">

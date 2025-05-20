@@ -74,3 +74,9 @@ button {
 .animate-fadeIn.delay-200 {
   animation-delay: 200ms;
 }
+
+.text-outline-yellow {
+  color: transparent;
+  -webkit-text-stroke: 1px #facc15; /* yellow-400 */
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.4); /* optional glow */
+}

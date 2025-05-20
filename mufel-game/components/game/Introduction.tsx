@@ -1,24 +1,46 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 export default function Introduction() {
   return (
-    <section className="relative bg-black text-white min-h-screen flex items-center justify-center text-center overflow-hidden pt-0">
-      <video 
-        autoPlay 
-        loop 
-        muted 
+    <section className="relative min-h-screen bg-black text-white overflow-hidden flex items-start justify-center pt-32 -mt-10">
+      {/* Video de fondo */}
+      <motion.video
+        autoPlay
+        loop
+        muted
+        playsInline
         className="absolute inset-0 w-full h-full object-cover z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
       >
-        <source src="/videos/plataformas.mp4" type="video/mp4" />
+        <source src="/videos/Mufel.mp4" type="video/mp4" />
         Tu navegador no soporta el video.
-      </video>
-      
-      <div className="absolute inset-0 bg-black/50 z-0"></div>
+      </motion.video>
 
-      <div className="relative z-10 max-w-3xl">
-        <h1 className="text-5xl font-bold">Bienvenido a MufelGame</h1>
-        <p className="mt-4 text-xl">Descubre un mundo lleno de desafíos y aventuras.</p>
-      </div>
+      {/* Oscurecimiento para contraste */}
+      <div className="absolute inset-0 bg-black/60 z-0" />
+
+      {/* Gradiente inferior de transición */}
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#1c0f0a] to-transparent z-0" />
+
+      {/* Texto con animación y resplandor pulsante */}
+      <motion.div
+        className="absolute top-24 left-1/2 transform -translate-x-1/2 z-10 text-center max-w-3xl px-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.h1
+          className="text-5xl font-bold text-outline-yellow"
+          animate={{ textShadow: ["0 0 0px #facc15", "0 0 20px #facc15", "0 0 0px #facc15"] }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+        >
+          Mufel Back To Hell
+        </motion.h1>
+      </motion.div>
     </section>
   );
 }

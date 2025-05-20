@@ -27,7 +27,7 @@ export default function CartPage() {
   }, 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 text-white pt-32">
+    <div className="min-h-screen flex flex-col pt-32 bg-gradient-to-b from-black via-gray-900 to-gray-950 text-white">
       <Navbar />
       <main className="flex-grow pt-24 container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 text-center">🛒 Tu Cesta</h1>

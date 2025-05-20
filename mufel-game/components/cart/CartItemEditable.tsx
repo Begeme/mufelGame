@@ -5,6 +5,7 @@ import { ItemCarrito, useCart } from "../../context/CartContext";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import EditarProductoModal from "./EditarProductoModal";
 import toast from "react-hot-toast";
+import { productos } from "@/data/productos";
 
 export default function CartItemEditable({ item }: { item: ItemCarrito }) {
   const { eliminarProducto } = useCart();
@@ -61,6 +62,7 @@ export default function CartItemEditable({ item }: { item: ItemCarrito }) {
       {editarAbierto && (
         <EditarProductoModal
           item={item}
+          producto={productos.find((p) => p.nombre === item.nombre)!}
           onClose={() => setEditarAbierto(false)}
         />
       )}

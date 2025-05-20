@@ -152,10 +152,10 @@ const productos: Producto[] = [
 export default function MerchPage() {
   const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null);
 
-  return (
-    <div className="min-h-screen flex flex-col">
+   return (
+    <div className="min-h-screen pt-32 bg-gradient-to-b from-black via-gray-900 to-gray-950 text-white flex flex-col">
       <Navbar />
-      <main className="flex-grow bg-gray-900 text-white py-10 pt-32">
+      <main className="flex-grow py-10">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">Tienda de Merchandising</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -203,7 +203,6 @@ export default function MerchPage() {
         </div>
       </main>
       <Footer />
-
       {productoSeleccionado && (
         <ProductoModal
           producto={productoSeleccionado}

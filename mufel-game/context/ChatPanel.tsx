@@ -118,8 +118,8 @@ export default function ChatPanel() {
       )}
 
       {activeUser && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 sm:top-auto sm:left-4 sm:right-auto sm:bottom-4 w-full h-full sm:w-[380px] sm:h-[500px] bg-gray-900 border border-gray-700 sm:rounded-xl rounded-none shadow-2xl flex flex-col z-50">
-          <div className="p-3 border-b border-gray-700 flex justify-between items-center shadow">
+        <div className="fixed inset-0 sm:bottom-4 sm:left-4 sm:top-auto sm:right-auto w-full h-full sm:w-[380px] sm:h-[500px] bg-gray-900 border border-gray-700 sm:rounded-xl rounded-none shadow-2xl flex flex-col z-50">
+          <div className="sticky top-0 z-10 bg-gray-900 p-3 border-b border-gray-700 flex justify-between items-center shadow">
             <div>
               <span className="font-semibold text-white">
                 💬 {activeUser.username}

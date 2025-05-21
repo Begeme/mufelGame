@@ -16,7 +16,7 @@ const gameModes = {
     titulo: "Modo Roguelike",
     descripcion:
       "Enfréntate a enemigos en un mundo generado proceduralmente, con mejoras y desafíos en cada partida.",
-    video: "/videos/Roguelike.mp4",
+    video: "/videos/Roguelike4.mp4",
     imagen: "/img/logo-mufel.jpeg",
   },
 };

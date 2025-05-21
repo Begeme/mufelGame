@@ -23,7 +23,7 @@ const gameModes = {
     videos: {
       movement: "/videos/MovimientoRoguelike.mp4",
       combat: "/videos/AtaqueRoguelike.mp4",
-      objective: "/videos/Roguelike.mp4",
+      objective: "/videos/Roguelike4.mp4",
     },
   },
 };

@@ -13,7 +13,7 @@ const images = [
 
 const videos = [
   "/videos/PlatformMufel.mp4",
-  "/videos/Roguelike.mp4",
+  "/videos/Roguelike4.mp4",
 ];
 
 export default function Media() {

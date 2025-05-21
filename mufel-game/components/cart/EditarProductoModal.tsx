@@ -165,8 +165,16 @@ export default function EditarProductoModal({
                               ? "border-yellow-400"
                               : "border-gray-600 hover:border-yellow-400"
                           }`}
-                          style={{ backgroundColor: colorToHex(v.color) }}
-                        />
+                          style={{
+                            backgroundColor: colorToHex(v.color),
+                            WebkitAppearance: "none",
+                            appearance: "none",
+                            backgroundClip: "padding-box",
+                          }}
+                          title={v.color}
+                        >
+                          <span className="sr-only">{v.color}</span>
+                        </button>
                       ))}
                     </div>
                   </div>

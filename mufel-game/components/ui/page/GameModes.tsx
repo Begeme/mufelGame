@@ -81,7 +81,7 @@ export default function GameModes() {
                   autoPlay
                   loop
                   muted
-                  className="w-full h-64 object-cover rounded-lg shadow-lg"
+                  className="w-full max-w-sm sm:max-w-full h-64 object-cover rounded-lg shadow-lg"
                 >
                   <source src={gameModes[selectedMode].video} type="video/mp4" />
                 </video>

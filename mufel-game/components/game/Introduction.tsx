@@ -34,7 +34,7 @@ export default function Introduction() {
         transition={{ duration: 0.8 }}
       >
         <motion.h1
-          className="text-5xl font-bold text-outline-yellow"
+          className="text-3xl sm:text-4xl md:text-5xl font-bold text-outline-yellow"
           animate={{ textShadow: ["0 0 0px #facc15", "0 0 20px #facc15", "0 0 0px #facc15"] }}
           transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
         >

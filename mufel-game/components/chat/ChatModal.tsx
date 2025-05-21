@@ -81,7 +81,10 @@ export default function ChatModal({ user }: ChatModalProps) {
                   m.sender_id === msg.sender_id &&
                   m.receiver_id === msg.receiver_id &&
                   m.content === msg.content &&
-                  Math.abs(new Date(m.created_at).getTime() - new Date(msg.created_at).getTime()) < 1000
+                  Math.abs(
+                    new Date(m.created_at).getTime() -
+                      new Date(msg.created_at).getTime()
+                  ) < 1000
               );
 
               if (index !== -1) {
@@ -220,62 +223,64 @@ export default function ChatModal({ user }: ChatModalProps) {
   const groupedMessages = groupMessagesByDate(messages);
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 text-sm scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent">
-        {Object.entries(groupedMessages).map(([label, msgs]) => (
-          <div key={label} className="space-y-2">
-            <div className="flex items-center gap-4 mb-2">
-              <div className="flex-1 h-px bg-gray-700" />
-              <span className="text-center text-xs text-gray-400 font-medium whitespace-nowrap">
-                {label}
-              </span>
-              <div className="flex-1 h-px bg-gray-700" />
-            </div>
-            {msgs.map((msg) => (
-              <div
-                key={msg.tempId ?? msg.id}
-                className={`px-4 py-2 rounded-lg max-w-[85%] break-words text-sm shadow-sm relative ${
-                  msg.sender_id === currentUser?.id
-                    ? "bg-blue-600 text-white ml-auto"
-                    : "bg-gray-700 text-white"
-                }`}
-              >
-                {msg.content}
-                <div className="text-[10px] text-gray-300 mt-1 text-right">
-                  {format(parseISO(msg.created_at), "HH:mm")}
-                </div>
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+      <div className="w-full max-w-md h-[90vh] bg-gray-900 rounded-lg shadow-xl flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 text-sm scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent">
+          {Object.entries(groupedMessages).map(([label, msgs]) => (
+            <div key={label} className="space-y-2">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="flex-1 h-px bg-gray-700" />
+                <span className="text-center text-xs text-gray-400 font-medium whitespace-nowrap">
+                  {label}
+                </span>
+                <div className="flex-1 h-px bg-gray-700" />
               </div>
-            ))}
-          </div>
-        ))}
+              {msgs.map((msg) => (
+                <div
+                  key={msg.tempId ?? msg.id}
+                  className={`px-4 py-2 rounded-lg max-w-[85%] break-words text-sm shadow-sm relative ${
+                    msg.sender_id === currentUser?.id
+                      ? "bg-blue-600 text-white ml-auto"
+                      : "bg-gray-700 text-white"
+                  }`}
+                >
+                  {msg.content}
+                  <div className="text-[10px] text-gray-300 mt-1 text-right">
+                    {format(parseISO(msg.created_at), "HH:mm")}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
 
-        {showTypingDots && (
-          <div className="text-xs text-gray-400 italic ml-2 mb-2 animate-pulse">
-            {user.username} está escribiendo
-            <span className="inline-block animate-bounce">...</span>
-          </div>
-        )}
-        <div ref={bottomRef} />
+          {showTypingDots && (
+            <div className="text-xs text-gray-400 italic ml-2 mb-2 animate-pulse">
+              {user.username} está escribiendo
+              <span className="inline-block animate-bounce">...</span>
+            </div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSend();
+          }}
+          className="p-2 border-t border-gray-700 flex items-center gap-2 bg-gray-800"
+        >
+          <input
+            type="text"
+            value={newMessage}
+            onChange={handleTyping}
+            placeholder="Escribe un mensaje..."
+            className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+          <Button type="submit" className="px-4 py-2 text-sm">
+            Enviar
+          </Button>
+        </form>
       </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSend();
-        }}
-        className="p-2 border-t border-gray-700 flex items-center gap-2 bg-gray-800"
-      >
-        <input
-          type="text"
-          value={newMessage}
-          onChange={handleTyping}
-          placeholder="Escribe un mensaje..."
-          className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-        />
-        <Button type="submit" className="px-4 py-2 text-sm">
-          Enviar
-        </Button>
-      </form>
     </div>
   );
 }

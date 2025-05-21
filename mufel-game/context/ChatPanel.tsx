@@ -5,6 +5,20 @@ import { useChat } from "../context/ChatLayout";
 import ChatModal from "../components/chat/ChatModal";
 import { supabase } from "../lib/supabaseClient";
 
+// Hook para detectar si es móvil
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
+
 export default function ChatPanel() {
   const context = useUser();
   const currentUser = context !== "loading" ? context.user : null;
@@ -20,6 +34,7 @@ export default function ChatPanel() {
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
   const [typingStatus, setTypingStatus] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const activeUser = openChats.find((u) => u.id === activeUserId) || null;
 
@@ -118,7 +133,13 @@ export default function ChatPanel() {
       )}
 
       {activeUser && (
-        <div className="fixed inset-0 sm:bottom-4 sm:left-4 sm:top-auto sm:right-auto w-full h-full sm:w-[380px] sm:h-[500px] bg-gray-900 border border-gray-700 sm:rounded-xl rounded-none shadow-2xl flex flex-col z-50">
+        <div
+          className={`fixed inset-0 z-50 flex flex-col bg-gray-900 border border-gray-700 shadow-2xl
+          ${isMobile
+            ? "rounded-none w-full h-full"
+            : "sm:bottom-4 sm:left-4 sm:top-auto sm:right-auto sm:w-[380px] sm:h-[500px] sm:rounded-xl"
+          }`}
+        >
           <div className="sticky top-0 z-10 bg-gray-900 p-3 border-b border-gray-700 flex justify-between items-center shadow">
             <div>
               <span className="font-semibold text-white">

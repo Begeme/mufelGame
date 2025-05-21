@@ -245,8 +245,14 @@ export default function ProductoModal({ producto, onClose }: Props) {
                           }`}
                           style={{
                             backgroundColor: colorToHex(variante.color),
+                            WebkitAppearance: "none",
+                            appearance: "none",
+                            backgroundClip: "padding-box",
                           }}
-                        />
+                          title={variante.color}
+                        >
+                          <span className="sr-only">{variante.color}</span>
+                        </button>
                       ))}
                     </div>
                   </div>

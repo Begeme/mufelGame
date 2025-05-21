@@ -1,11 +1,118 @@
 {
-    "navbar": {
-      "game": "Game",
-      "tracker": "Tracker",
-      "news": "News",
-      "merch": "Merchandising",
-      "language": "English",
-      "signup": "Sign Up"
+  "navbar": {
+    "home": "Home",
+    "game": "Game",
+    "tracker": "Tracker",
+    "news": "News",
+    "merch": "Shop",
+    "language": "Language",
+    "signup": "Sign Up",
+    "download": "Download",
+    "friends": "Friends",
+    "profile": "My Profile",
+    "settings": "Settings",
+    "logout": "Log Out",
+    "cart": "View Cart"
+  },
+  "hero": {
+    "title": "Welcome to the battle!",
+    "subtitle": "Join the action and show your skill.",
+    "cta": "Play Free"
+  },
+  "news": {
+    "latest": "Latest News",
+    "moreNews": "View more news"
+  },
+  "stats": {
+    "title": "Global Statistics",
+    "players": "Active Players",
+    "matches": "Matches Played",
+    "uptime": "Server Uptime"
+  },
+  "gameModes": {
+    "title": "Game Modes",
+    "plataformas": "Platformer",
+    "roguelike": "Roguelike",
+    "descripcionPlataformas": "Overcome obstacles, jump between platforms, and show your precision in this exciting game mode.",
+    "descripcionRoguelike": "Face enemies in a procedurally generated world, with upgrades and challenges each match."
+  },
+  "ranking": {
+    "title": "🏆 Top 10 Roguelike",
+    "posicion": "#",
+    "jugador": "Player",
+    "puntos": "Points"
+  },
+  "featuredMerch": {
+    "title": "Best Sellers",
+    "verMas": "View All"
+  },
+  "testimonials": {
+    "title": "What players are saying",
+    "anterior": "Previous",
+    "siguiente": "Next"
+  },
+  "howToPlay": {
+    "title": "How to Play",
+    "mode": {
+      "plataformas": "Platformer",
+      "roguelike": "Roguelike"
+    },
+    "sections": {
+      "movement": "Movement",
+      "combat": "Combat",
+      "objective": "Objective"
+    },
+    "plataformas": {
+      "movement": "Move with A (left), D (right), jump with SPACE.",
+      "combat": "Left click: Fireball. Right click: Shield.",
+      "objective": "Reach the final goal without dying, escaping or eliminating enemies."
+    },
+    "roguelike": {
+      "movement": "Move with W, A, S, D in all directions.",
+      "combat": "Left click: Attack.",
+      "objective": "Unlock dungeon rooms until you find the exit door."
     }
+  },
+  "gameModesGame": {
+  "title": "Game Modes",
+  "plataformas": {
+    "title": "What is a Platformer Game?",
+    "description": "Platformer games are a genre where players must navigate levels filled with obstacles, floating platforms, and enemies. Precision in jumping and movement is key to overcoming challenges.",
+    "history": "This genre became popular in the 80s with games like 'Super Mario Bros' and 'Sonic the Hedgehog'. They are known for jump mechanics and a focus on exploration and precise timing.",
+    "characteristics": [
+      "📌 Focus on jumping and precision.",
+      "🎮 Moving platforms and dynamic obstacles.",
+      "💡 Requires coordination and reflexes.",
+      "🏆 Goal: reach the end of the level avoiding dangers."
+    ]
+  },
+  "roguelike": {
+    "title": "What is a Roguelike?",
+    "description": "Roguelikes feature randomly generated dungeons, permanent death, and high difficulty. Each run is unique, and exploration is key.",
+    "history": "The term 'roguelike' comes from the game 'Rogue' (1980), which introduced random dungeons and permadeath. Since then, games like 'Hades' and 'The Binding of Isaac' have refined the genre.",
+    "characteristics": [
+      "🗺️ Randomly generated dungeons.",
+      "💀 Permadeath: each run is different.",
+      "⚔️ Focus on strategic combat and progressive upgrades.",
+      "🎲 Elements of randomness that change each attempt."
+    ]
   }
+},
+
   
+
+  "footer": {
+    "rights": "All rights reserved.",
+    "explore": {
+      "title": "Explore"
+    },
+    "support": {
+      "title": "Support",
+      "help": "Help Center",
+      "faq": "FAQ",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    },
+    "follow": "Follow us"
+  }
+}

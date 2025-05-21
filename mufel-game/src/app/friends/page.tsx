@@ -234,7 +234,6 @@ export default function FriendsPage() {
         </motion.h1>
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 gap-10">
-          {/* Buscar jugadores */}
           <section className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4">🔍 Buscar jugadores</h2>
             <div className="flex gap-3">
@@ -280,7 +279,6 @@ export default function FriendsPage() {
             </AnimatePresence>
           </section>
 
-          {/* Lista de amigos */}
           <section className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4">👥 Tus amigos</h2>
             <input
@@ -292,7 +290,6 @@ export default function FriendsPage() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* En línea */}
               <div>
                 <h3 className="text-lg font-semibold mb-2 text-green-400">
                   🟢 En línea
@@ -342,7 +339,6 @@ export default function FriendsPage() {
                 </div>
               </div>
 
-              {/* Desconectados */}
               <div>
                 <h3 className="text-lg font-semibold mb-2 text-gray-400">
                   ⚫ Desconectados
@@ -396,13 +392,11 @@ export default function FriendsPage() {
             </div>
           </section>
 
-          {/* Solicitudes de amistad */}
           <section className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-6">
               📨 Solicitudes de amistad
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Recibidas */}
               <div>
                 <h3 className="text-lg font-semibold mb-3">📥 Recibidas</h3>
                 <div className="space-y-3">
@@ -439,7 +433,6 @@ export default function FriendsPage() {
                 </div>
               </div>
 
-              {/* Enviadas */}
               <div>
                 <h3 className="text-lg font-semibold mb-3">📤 Enviadas</h3>
                 <div className="space-y-3">

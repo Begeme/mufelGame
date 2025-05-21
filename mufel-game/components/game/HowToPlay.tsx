@@ -2,13 +2,24 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+
+export default function HowToPlay() {
+  const { t } = useTranslation();
+  const [isPlataformas, setIsPlataformas] = useState(true);
+  const [selectedSection, setSelectedSection] = useState<
+    "movement" | "combat" | "objective"
+  >("movement");
+
+  const selectedMode = isPlataformas ? "plataformas" : "roguelike";
+
 
 const gameModes = {
   plataformas: {
-    title: "Modo Plataformas",
-    movement: "Mueve con A (izquierda), D (derecha), salta con ESPACIO.",
-    combat: "Clic izquierdo: Lanza bola de fuego. Clic derecho: Cubrirse.",
-    objective: "Llega a la meta final sin morir, escapando o eliminando enemigos.",
+    title: t("howToPlay.mode.plataformas"),
+    movement: t("howToPlay.plataformas.movement"),
+    combat: t("howToPlay.plataformas.combat"),
+    objective: t("howToPlay.plataformas.objective"),
     videos: {
       movement: "/videos/MovimientoMufel.mp4",
       combat: "/videos/AtaqueMufel.mp4",
@@ -16,10 +27,10 @@ const gameModes = {
     },
   },
   roguelike: {
-    title: "Modo Roguelike",
-    movement: "Mueve con W, A, S, D en todas las direcciones.",
-    combat: "Clic izquierdo: Ataca.",
-    objective: "Desbloquea salas de la mazmorra hasta encontrar la puerta de salida.",
+    title: t("howToPlay.mode.roguelike"),
+    movement: t("howToPlay.roguelike.movement"),
+    combat: t("howToPlay.roguelike.combat"),
+    objective: t("howToPlay.roguelike.objective"),
     videos: {
       movement: "/videos/MovimientoRoguelike.mp4",
       combat: "/videos/AtaqueRoguelike.mp4",
@@ -28,15 +39,10 @@ const gameModes = {
   },
 };
 
-export default function HowToPlay() {
-  const [isPlataformas, setIsPlataformas] = useState(true);
-  const [selectedSection, setSelectedSection] = useState<"movement" | "combat" | "objective">("movement");
 
-  const selectedMode = isPlataformas ? "plataformas" : "roguelike";
 
   return (
     <section className="relative py-20 -mt-10 bg-gradient-to-b from-[#1c0f0a] via-black to-black text-white overflow-hidden">
-      {/* Gradientes visuales */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#1c0f0a] to-transparent z-0" />
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black to-transparent z-0" />
 
@@ -48,10 +54,9 @@ export default function HowToPlay() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Cómo Jugar
+          {t("howToPlay.title")}
         </motion.h2>
 
-        {/* Switch de modo */}
         <motion.div
           className="flex justify-center mb-10"
           initial={{ opacity: 0, y: 10 }}
@@ -75,7 +80,9 @@ export default function HowToPlay() {
                 isPlataformas ? "left-0" : "left-1/2"
               }`}
             >
-              {isPlataformas ? "Plataformas" : "Roguelike"}
+              {isPlataformas
+                ? t("howToPlay.mode.plataformas")
+                : t("howToPlay.mode.roguelike")}
             </span>
             <span
               className={`w-1/2 text-sm font-bold text-center transition-all ${
@@ -87,7 +94,6 @@ export default function HowToPlay() {
           </motion.div>
         </motion.div>
 
-        {/* Contenido principal */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-12 px-4">
           <motion.div
             className="w-full md:w-1/2"
@@ -99,7 +105,11 @@ export default function HowToPlay() {
               {["movement", "combat", "objective"].map((key) => (
                 <motion.button
                   key={key}
-                  onClick={() => setSelectedSection(key as "movement" | "combat" | "objective")}
+                  onClick={() =>
+                    setSelectedSection(
+                      key as "movement" | "combat" | "objective"
+                    )
+                  }
                   whileTap={{ scale: 0.95 }}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -109,7 +119,11 @@ export default function HowToPlay() {
                       : "bg-gray-700 hover:bg-yellow-400"
                   }`}
                 >
-                  {key === "movement" ? "Movimiento" : key === "combat" ? "Combate" : "Objetivo"}
+                  {key === "movement"
+                    ? t("howToPlay.sections.movement")
+                    : key === "combat"
+                    ? t("howToPlay.sections.combat")
+                    : t("howToPlay.sections.objective")}
                 </motion.button>
               ))}
             </div>
@@ -123,8 +137,12 @@ export default function HowToPlay() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <h3 className="text-2xl font-bold mb-2">{gameModes[selectedMode].title}</h3>
-                <p className="text-lg text-gray-300">{gameModes[selectedMode][selectedSection]}</p>
+                <h3 className="text-2xl font-bold mb-2">
+                  {gameModes[selectedMode].title}
+                </h3>
+                <p className="text-lg text-gray-300">
+                  {gameModes[selectedMode][selectedSection]}
+                </p>
               </motion.div>
             </AnimatePresence>
           </motion.div>

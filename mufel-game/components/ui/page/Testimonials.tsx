@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+
+
+export default function Testimonials() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { t } = useTranslation();
 
 const testimonios = [
   {
@@ -32,9 +38,6 @@ const testimonios = [
   },
 ];
 
-export default function Testimonials() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % testimonios.length);
@@ -59,9 +62,7 @@ export default function Testimonials() {
 
   return (
     <section className="relative py-16 -mt-10 bg-gradient-to-b from-[#2a0f0f] via-black to-black overflow-hidden">
-      {/* Gradiente superior para fusión con FeaturedMerch */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#2a0f0f] to-transparent z-0" />
-      {/* Gradiente inferior opcional para fusión con Footer */}
       <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black to-transparent z-0" />
 
       <div className="relative z-10 container mx-auto text-center text-white">
@@ -72,7 +73,7 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Lo que dicen los jugadores
+          {t("testimonials.title")}
         </motion.h2>
 
         <div className="relative bg-gray-700 p-8 rounded-2xl shadow-lg max-w-xl mx-auto">
@@ -116,13 +117,13 @@ export default function Testimonials() {
               onClick={prevTestimonial}
               className="bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-500 transition duration-300 cursor-pointer"
             >
-              ⬅ Anterior
+              ⬅ {t("testimonials.anterior")}
             </button>
             <button
               onClick={nextTestimonial}
               className="bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-500 transition duration-300 cursor-pointer "
             >
-              Siguiente ➡
+              {t("testimonials.siguiente")} ➡
             </button>
           </div>
         </div>

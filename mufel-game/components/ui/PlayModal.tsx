@@ -26,7 +26,6 @@ export default function PlayModal({ isOpen, onClose }: PlayModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          {/* Fondo visible y suave */}
           <motion.div
             className="absolute inset-0 bg-black/30 backdrop-blur-md"
             initial={{ opacity: 0 }}
@@ -34,7 +33,6 @@ export default function PlayModal({ isOpen, onClose }: PlayModalProps) {
             exit={{ opacity: 0 }}
           />
 
-          {/* Modal */}
           <motion.div
             onClick={(e) => e.stopPropagation()}
             className="relative bg-gradient-to-br from-[#111827] via-[#0D1221] to-[#1f2937] p-10 md:p-12 rounded-xl shadow-2xl w-[90%] max-w-4xl h-auto md:h-[70%] flex flex-col justify-center items-center border border-gray-700"

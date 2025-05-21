@@ -5,9 +5,7 @@ import { motion } from "framer-motion";
 export default function Lore() {
   return (
     <section className="relative py-20 -mt-10 bg-gradient-to-b from-black via-[#1c0f0a] to-[#2a0f0f] text-white overflow-hidden">
-      {/* Gradiente superior para conectar con GameModes */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent z-0" />
-      {/* Gradiente inferior si el siguiente componente lo necesita */}
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#2a0f0f] to-transparent z-0" />
 
       <div className="relative z-10 max-w-4xl mx-auto text-center px-4">

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 export default function Introduction() {
   return (
     <section className="relative min-h-screen bg-black text-white overflow-hidden flex items-start justify-center pt-32 -mt-10">
-      {/* Video de fondo */}
       <motion.video
         autoPlay
         loop
@@ -20,13 +19,10 @@ export default function Introduction() {
         Tu navegador no soporta el video.
       </motion.video>
 
-      {/* Oscurecimiento para contraste */}
       <div className="absolute inset-0 bg-black/60 z-0" />
 
-      {/* Gradiente inferior de transición */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#1c0f0a] to-transparent z-0" />
 
-      {/* Texto con animación y resplandor pulsante */}
       <motion.div
         className="absolute top-24 left-1/2 transform -translate-x-1/2 z-10 text-center max-w-3xl px-4"
         initial={{ opacity: 0, y: -20 }}

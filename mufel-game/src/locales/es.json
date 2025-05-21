@@ -1,10 +1,119 @@
 {
-    "navbar": {
-      "game": "Juego",
-      "tracker": "Tracker",
-      "news": "Noticias",
-      "merch": "Merchandising",
-      "language": "Español",
-      "signup": "Registrarse"
+  "navbar": {
+    "home": "Inicio",
+    "game": "Juego",
+    "tracker": "Tracker",
+    "news": "Noticias",
+    "merch": "Tienda",
+    "language": "Idioma",
+    "signup": "Registrarse",
+    "download": "Descargar",
+    "friends": "Amigos",
+    "profile": "Mi Perfil",
+    "settings": "Configuración",
+    "logout": "Cerrar sesión",
+    "cart": "Ver Cesta"
+  },
+  "hero": {
+    "title": "¡Bienvenido a la batalla!",
+    "subtitle": "Únete a la acción y demuestra tu habilidad.",
+    "cta": "Jugar Gratis"
+  },
+  "news": {
+    "latest": "Últimas Noticias",
+    "moreNews": "Ver más noticias"
+  },
+  "stats": {
+    "title": "Estadísticas Globales",
+    "players": "Jugadores Activos",
+    "matches": "Partidas Jugadas",
+    "uptime": "Tiempo de Uptime del Servidor"
+  },
+  "gameModes": {
+    "title": "Modos de Juego",
+    "plataformas": "Plataformas",
+    "roguelike": "Roguelike",
+    "descripcionPlataformas": "Supera obstáculos, salta entre plataformas y demuestra tu precisión en este emocionante modo de juego.",
+    "descripcionRoguelike": "Enfréntate a enemigos en un mundo generado proceduralmente, con mejoras y desafíos en cada partida."
+  },
+  "ranking": {
+    "title": "🏆 Top 10 Roguelike",
+    "posicion": "#",
+    "jugador": "Jugador",
+    "puntos": "Puntos"
+  },
+  "featuredMerch": {
+    "title": "Lo más vendido",
+    "verMas": "Ver todo"
+  },
+  "testimonials": {
+    "title": "Lo que dicen los jugadores",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente"
+  },
+  "howToPlay": {
+    "title": "Cómo Jugar",
+    "mode": {
+      "plataformas": "Plataformas",
+      "roguelike": "Roguelike"
+    },
+    "sections": {
+      "movement": "Movimiento",
+      "combat": "Combate",
+      "objective": "Objetivo"
+    },
+    "plataformas": {
+      "movement": "Mueve con A (izquierda), D (derecha), salta con ESPACIO.",
+      "combat": "Clic izquierdo: Lanza bola de fuego. Clic derecho: Cubrirse.",
+      "objective": "Llega a la meta final sin morir, escapando o eliminando enemigos."
+    },
+    "roguelike": {
+      "movement": "Mueve con W, A, S, D en todas las direcciones.",
+      "combat": "Clic izquierdo: Ataca.",
+      "objective": "Desbloquea salas de la mazmorra hasta encontrar la puerta de salida."
     }
+  },
+  "gameModesGame": {
+  "title": "Modos de Juego",
+  "plataformas": {
+    "title": "¿Qué es un Juego de Plataformas?",
+    "description": "Los juegos de plataformas son un género de videojuegos en el que el jugador debe atravesar niveles llenos de obstáculos, plataformas flotantes y enemigos. La precisión en los saltos y la movilidad son clave para superar los desafíos.",
+    "history": "Este género se popularizó en la década de los 80 con juegos como 'Super Mario Bros' y 'Sonic the Hedgehog'. Son conocidos por sus mecánicas de salto y su enfoque en la exploración y el timing preciso.",
+    "characteristics": [
+      "📌 Enfoque en saltos y precisión.",
+      "🎮 Plataformas móviles y obstáculos dinámicos.",
+      "💡 Requiere coordinación y reflejos.",
+      "🏆 Objetivo: llegar al final del nivel evitando peligros."
+    ]
+  },
+  "roguelike": {
+    "title": "¿Qué es un Roguelike?",
+    "description": "Los roguelike son juegos que se caracterizan por mazmorras generadas aleatoriamente, muerte permanente y una dificultad elevada. Cada partida es única, y la exploración es clave.",
+    "history": "El término 'roguelike' proviene del juego 'Rogue' (1980), que introdujo mazmorras aleatorias y muerte permanente. Desde entonces, juegos como 'Hades' y 'The Binding of Isaac' han refinado el género.",
+    "characteristics": [
+      "🗺️ Mazmorras generadas aleatoriamente.",
+      "💀 Muerte permanente: cada partida es diferente.",
+      "⚔️ Enfoque en combate estratégico y mejoras progresivas.",
+      "🎲 Elementos de azar que cambian la experiencia en cada intento."
+    ]
   }
+},
+
+
+  
+
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "explore": {
+      "title": "Explorar"
+    },
+    "support": {
+      "title": "Soporte",
+      "help": "Centro de Ayuda",
+      "faq": "Preguntas Frecuentes",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad"
+    },
+    "follow": "Síguenos"
+  }
+}

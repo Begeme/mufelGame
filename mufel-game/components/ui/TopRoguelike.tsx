@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface PlayerEntry {
   username: string;
@@ -11,6 +12,7 @@ interface PlayerEntry {
 
 export default function TopRoguelike() {
   const [ranking, setRanking] = useState<PlayerEntry[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -48,10 +50,8 @@ export default function TopRoguelike() {
 
   return (
     <section className="relative py-16 -mt-10 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden">
-      {/* Gradiente superior */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent z-0" />
 
-      {/* Gradiente inferior */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-0" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-white">
@@ -62,7 +62,7 @@ export default function TopRoguelike() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          🏆 Top 10 Roguelike
+          {t("ranking.title")}
         </motion.h2>
 
         <motion.div
@@ -75,9 +75,9 @@ export default function TopRoguelike() {
           <table className="w-full text-sm sm:text-base">
             <thead className="bg-gray-900 text-yellow-500">
               <tr>
-                <th className="px-4 py-3 text-left">#</th>
-                <th className="px-4 py-3 text-left">Jugador</th>
-                <th className="px-4 py-3 text-right">Puntos</th>
+                <th className="px-4 py-3 text-left">{t("ranking.posicion")}</th>
+                <th className="px-4 py-3 text-left">{t("ranking.jugador")}</th>
+                <th className="px-4 py-3 text-right">{t("ranking.puntos")}</th>
               </tr>
             </thead>
             <tbody>

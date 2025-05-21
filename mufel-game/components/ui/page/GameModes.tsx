@@ -3,33 +3,31 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+
+export default function GameModes() {
+  const [selectedMode, setSelectedMode] = useState<"plataformas" | "roguelike">("plataformas");
+  const { t } = useTranslation();
 
 const gameModes = {
   plataformas: {
-    titulo: "Modo Plataformas",
-    descripcion:
-      "Supera obstáculos, salta entre plataformas y demuestra tu precisión en este emocionante modo de juego.",
+    titulo: t("gameModes.plataformas"),
+    descripcion: t("gameModes.descripcionPlataformas"),
     video: "/videos/PlatformMufel.mp4",
     imagen: "/img/fondo-mufel.png",
   },
   roguelike: {
-    titulo: "Modo Roguelike",
-    descripcion:
-      "Enfréntate a enemigos en un mundo generado proceduralmente, con mejoras y desafíos en cada partida.",
+    titulo: t("gameModes.roguelike"),
+    descripcion: t("gameModes.descripcionRoguelike"),
     video: "/videos/Roguelike4.mp4",
     imagen: "/img/logo-mufel.jpeg",
   },
 };
 
-export default function GameModes() {
-  const [selectedMode, setSelectedMode] = useState<"plataformas" | "roguelike">("plataformas");
-
   return (
     <section className="relative py-16 -mt-10 bg-gradient-to-b from-[#1c0f0a] via-black to-black overflow-hidden">
-      {/* Gradiente superior para integración con Stats */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#1c0f0a] to-transparent z-0" />
 
-      {/* Gradiente inferior para integración con siguiente componente */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-0" />
 
       <div className="relative z-10 container mx-auto text-center text-white">
@@ -40,7 +38,7 @@ export default function GameModes() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Modos de Juego
+          {t("gameModes.title")}
         </motion.h2>
 
         <motion.div
@@ -60,7 +58,7 @@ export default function GameModes() {
               }`}
               onClick={() => setSelectedMode(mode)}
             >
-              {mode === "plataformas" ? "Plataformas" : "Roguelike"}
+              {mode === "plataformas" ? t("gameModes.plataformas") : t("gameModes.roguelike")}
             </button>
           ))}
         </motion.div>

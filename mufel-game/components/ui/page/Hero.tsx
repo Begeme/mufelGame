@@ -2,9 +2,12 @@
 import { useState } from "react";
 import PlayModal from "../PlayModal";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+
 
 export default function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <section
@@ -19,10 +22,10 @@ export default function Hero() {
 
       <div className="relative z-10">
         <h1 className="text-5xl font-bold animate-fadeIn">
-          ¡Bienvenido a la batalla!
+          {t("hero.title")}
         </h1>
         <p className="mt-4 text-lg animate-fadeIn delay-200">
-          Únete a la acción y demuestra tu habilidad.
+          {t("hero.subtitle")}
         </p>
         <motion.button
           className="mt-6 bg-yellow-500 text-black px-6 py-3 rounded-lg text-xl font-bold hover:bg-yellow-400 transition duration-300 cursor-pointer"
@@ -35,7 +38,7 @@ export default function Hero() {
             ease: "easeInOut",
           }}
         >
-          Jugar Gratis
+          {t("hero.cta")}
         </motion.button>
       </div>
       <PlayModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

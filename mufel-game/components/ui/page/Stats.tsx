@@ -1,10 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function Stats() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative py-16 -mt-10 bg-gradient-to-b from-black via-[#0e0e0e] to-[#1c0f0a] overflow-hidden">
-      {/* Gradiente inferior para conectar con el siguiente componente */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#1c0f0a] to-transparent z-0" />
 
       <div className="relative z-10 container mx-auto text-center">
@@ -15,14 +17,14 @@ export default function Stats() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Estadísticas Globales
+          {t("stats.title")}
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white">
           {[
-            { valor: "500,000+", texto: "Jugadores Activos" },
-            { valor: "120,000+", texto: "Partidas Jugadas" },
-            { valor: "99%", texto: "Tiempo de Uptime del Servidor" },
+            { valor: "500,000+", texto: t("stats.players") },
+            { valor: "120,000+", texto: t("stats.matches") },
+            { valor: "99%", texto: t("stats.uptime") },
           ].map((item, index) => (
             <motion.div
               key={index}

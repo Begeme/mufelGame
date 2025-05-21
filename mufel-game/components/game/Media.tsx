@@ -21,7 +21,6 @@ export default function Media() {
 
   return (
     <section className="relative py-20 -mt-10 bg-gradient-to-b from-[#2a0f0f] via-[#1c0f0a] to-black text-white overflow-hidden text-center flex flex-col items-center">
-      {/* Gradientes de conexión */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#2a0f0f] to-transparent z-0" />
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black to-transparent z-0" />
 
@@ -119,7 +118,6 @@ export default function Media() {
         </motion.div>
       </div>
 
-      {/* Modal de imagen ampliada */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div

@@ -7,18 +7,18 @@ import ProductoModal from "../merch/ProductModal";
 import type { Producto } from "@/data/productos";
 import { productos } from "@/data/productos";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function FeaturedMerch() {
   const [productoSeleccionado, setProductoSeleccionado] =
     useState<Producto | null>(null);
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <section className="relative py-16 -mt-10 bg-gradient-to-b from-black via-[#1c0f0a] to-[#2a0f0f] overflow-hidden">
-      {/* Gradiente superior (para transición desde TopRoguelike) */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent z-0" />
 
-      {/* Gradiente inferior (para unión con Testimonials) */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#2a0f0f] to-transparent z-0" />
 
       <div className="relative z-10 container mx-auto text-center text-white">
@@ -30,7 +30,7 @@ export default function FeaturedMerch() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Lo más vendido
+          {t("featuredMerch.title")}
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

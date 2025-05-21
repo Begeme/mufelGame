@@ -95,7 +95,6 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full bg-black bg-opacity-95 backdrop-blur-sm text-white z-[9999] shadow-sm">
       <div className="w-full flex justify-between items-center h-20 px-6">
-        {/* Logo */}
         <div className="flex-shrink-0">
           <Link href="/">
             <Image
@@ -110,7 +109,7 @@ export default function Navbar() {
 
         <div className="hidden lg:flex flex-1 justify-center space-x-8 items-center text-base font-semibold tracking-wide uppercase ml-80">
           <Link href="/" className="hover:text-yellow-400">
-            Inicio
+            {t("navbar.home")}
           </Link>
           <Link href="/game" className="hover:text-yellow-400">
             {t("navbar.game")}
@@ -178,28 +177,28 @@ export default function Navbar() {
                     onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
-                    Descargar
+                    {t("navbar.download")}
                   </Link>
                   <Link
                     href="/friends"
                     onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
-                    Amigos
+                    {t("navbar.friends")}
                   </Link>
                   <Link
                     href="/profile"
                     onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
-                    Mi Perfil
+                    {t("navbar.profile")}
                   </Link>
                   <Link
                     href="/settings"
                     onClick={() => setUserDropdown(false)}
                     className="block px-4 py-2 hover:bg-gray-700"
                   >
-                    Configuración
+                    {t("navbar.settings")}
                   </Link>
                   <button
                     onClick={() => {
@@ -208,7 +207,7 @@ export default function Navbar() {
                     }}
                     className="w-full text-left px-4 py-2 hover:bg-gray-700 cursor-pointer"
                   >
-                    Cerrar sesión
+                    {t("navbar.logout")}
                   </button>
                 </motion.div>
               )}
@@ -254,7 +253,7 @@ export default function Navbar() {
               href: "/cart",
               label: (
                 <span className="flex items-center gap-2">
-                  🛒 Ver Cesta
+                  🛒 {t("navbar.cart")}
                   {carrito.length > 0 && (
                     <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
                       {carrito.reduce((acc, item) => acc + item.cantidad, 0)}

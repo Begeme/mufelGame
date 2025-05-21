@@ -45,7 +45,6 @@ export default function NewsModal({ news, onClose }: Props) {
           className="relative bg-gray-900 rounded-xl max-w-3xl w-full overflow-hidden shadow-xl"
           onClick={handleModalClick} // No cerrar al hacer clic dentro
         >
-          {/* Botón cerrar */}
           <button
             onClick={onClose}
             className="absolute top-3 right-3 z-10 text-white text-xl hover:text-yellow-500 transition-colors"
@@ -54,7 +53,6 @@ export default function NewsModal({ news, onClose }: Props) {
             ✕
           </button>
 
-          {/* Imagen superior */}
           {news.image && (
             <div className="relative w-full h-64">
               <Image
@@ -66,7 +64,6 @@ export default function NewsModal({ news, onClose }: Props) {
             </div>
           )}
 
-          {/* Contenido */}
           <div className="p-6 space-y-4">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               {news.title}

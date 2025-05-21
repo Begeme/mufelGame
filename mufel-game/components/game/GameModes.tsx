@@ -1,9 +1,7 @@
 "use client";
-
 import { useState } from "react";
 import { FaGamepad, FaDungeon } from "react-icons/fa";
 import { MdOutlineCategory } from "react-icons/md";
-import { motion, AnimatePresence } from "framer-motion";
 
 const gameModes = {
   plataformas: {
@@ -36,146 +34,70 @@ const gameModes = {
 
 export default function GameModes() {
   const [isPlataformas, setIsPlataformas] = useState(true);
+
   const selectedMode = isPlataformas ? "plataformas" : "roguelike";
 
   return (
-    <section className="relative py-20 -mt-10 bg-gradient-to-b from-black via-[#0e0e0e] to-black text-white overflow-hidden">
-      {/* Gradientes de transición */}
-      <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent z-0" />
-      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black to-transparent z-0" />
+    <section className="bg-gray-900 text-white py-20 flex flex-col items-center">
+      <h2 className="text-4xl font-bold text-center mb-6">Modos de Juego</h2>
 
-      <div className="relative z-10 container mx-auto flex flex-col items-center text-center px-4">
-        <motion.h2
-          className="text-4xl font-bold mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
+      <div className="mt-4 flex items-center">
+        <div
+          className="relative w-48 h-12 bg-gray-700 rounded-full flex items-center cursor-pointer transition"
+          onClick={() => setIsPlataformas(!isPlataformas)}
         >
-          Modos de Juego
-        </motion.h2>
-
-        {/* Switch */}
-        <motion.div
-          className="mt-4"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-        >
-          <motion.div
-            className="relative w-48 h-12 bg-gray-700 rounded-full flex items-center cursor-pointer transition"
-            onClick={() => setIsPlataformas(!isPlataformas)}
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
+          <span
+            className={`w-1/2 text-center text-sm font-bold transition-all ${
+              isPlataformas ? "text-black" : "text-gray-300"
+            }`}
           >
-            <span
-              className={`w-1/2 text-center text-sm font-bold transition-all ${
-                isPlataformas ? "text-black" : "text-gray-300"
-              }`}
-            >
-              Plataformas
-            </span>
+            Plataformas
+          </span>
 
-            <span
-              className={`absolute w-1/2 h-full rounded-full bg-yellow-500 flex items-center justify-center font-bold text-black transition-all ${
-                isPlataformas ? "left-0" : "left-1/2"
-              }`}
-            >
-              {isPlataformas ? "Plataformas" : "Roguelike"}
-            </span>
-
-            <span
-              className={`w-1/2 text-center text-sm font-bold transition-all ${
-                isPlataformas ? "text-gray-300" : "text-black"
-              }`}
-            >
-              Roguelike
-            </span>
-          </motion.div>
-        </motion.div>
-
-        {/* Contenido del modo */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedMode}
-            className="mt-10 max-w-4xl bg-gray-800 p-8 rounded-lg shadow-lg text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+          <span
+            className={`absolute w-1/2 h-full rounded-full bg-yellow-500 flex items-center justify-center font-bold text-black transition-all ${
+              isPlataformas ? "left-0" : "left-1/2"
+            }`}
           >
-            <motion.h3
-              className="text-3xl font-bold flex items-center justify-center gap-2"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              {isPlataformas ? <FaGamepad /> : <FaDungeon />}
-              {gameModes[selectedMode].title}
-            </motion.h3>
+            {isPlataformas ? "Plataformas" : "Roguelike"}
+          </span>
 
-            <motion.p
-              className="text-lg text-gray-300 mt-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              {gameModes[selectedMode].description}
-            </motion.p>
+          <span
+            className={`w-1/2 text-center text-sm font-bold transition-all ${
+              isPlataformas ? "text-gray-300" : "text-black"
+            }`}
+          >
+            Roguelike
+          </span>
+        </div>
+      </div>
 
-            <motion.div
-              className="mt-6 bg-gray-700 p-4 rounded-lg"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <h4 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2">
-                <MdOutlineCategory /> Historia
-              </h4>
-              <p className="text-gray-300 mt-2">
-                {gameModes[selectedMode].history}
-              </p>
-            </motion.div>
+      <div className="mt-10 max-w-4xl bg-gray-800 p-8 rounded-lg shadow-lg text-center">
+        <h3 className="text-3xl font-bold flex items-center justify-center gap-2">
+          {isPlataformas ? <FaGamepad /> : <FaDungeon />} 
+          {gameModes[selectedMode].title}
+        </h3>
+        <p className="text-lg text-gray-300 mt-4">
+          {gameModes[selectedMode].description}
+        </p>
 
-            <motion.div
-              className="mt-6 bg-gray-700 p-4 rounded-lg"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h4 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2">
-                ⭐ Características
-              </h4>
-              <motion.ul
-                className="text-gray-300 mt-2 list-disc list-inside space-y-2 text-left"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.1,
-                    },
-                  },
-                }}
-              >
-                {gameModes[selectedMode].characteristics.map((feature, index) => (
-                  <motion.li
-                    key={index}
-                    variants={{
-                      hidden: { opacity: 0, x: -10 },
-                      visible: { opacity: 1, x: 0 },
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {feature}
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
+        <div className="mt-6 bg-gray-700 p-4 rounded-lg">
+          <h4 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2">
+            <MdOutlineCategory /> Historia
+          </h4>
+          <p className="text-gray-300 mt-2">{gameModes[selectedMode].history}</p>
+        </div>
+
+        <div className="mt-6 bg-gray-700 p-4 rounded-lg">
+          <h4 className="text-xl font-bold text-yellow-400 flex items-center justify-center gap-2">
+            ⭐ Características
+          </h4>
+          <ul className="text-gray-300 mt-2 list-disc list-inside space-y-2">
+            {gameModes[selectedMode].characteristics.map((feature, index) => (
+              <li key={index}>{feature}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

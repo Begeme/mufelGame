@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const NewsModal = dynamic(() => import("../../news/NewsModal"));
 
@@ -23,6 +24,7 @@ export default function News() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -40,13 +42,10 @@ export default function News() {
 
   return (
     <section className="relative py-16 bg-black border-t border-gray-900 overflow-hidden">
-      {/* Gradiente superior para integrarse con Hero */}
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#1c0f0a] to-transparent z-0" />
 
-      {/* Gradiente inferior para la siguiente sección */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-0" />
 
-      {/* Contenido */}
       <div className="relative z-10 container mx-auto text-center">
         <motion.h2
           className="text-3xl font-bold text-white mb-6 cursor-pointer hover:text-yellow-400 transition"
@@ -56,7 +55,7 @@ export default function News() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Últimas Noticias
+          {t("news.latest")}
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 cursor-pointer">

@@ -45,10 +45,9 @@ export default function ChatPanel() {
 
   useEffect(() => {
     if (!currentUser) return;
-    const channel = supabase.channel("typing-status").on(
-      "broadcast",
-      { event: "typing" },
-      (payload) => {
+    const channel = supabase
+      .channel("typing-status")
+      .on("broadcast", { event: "typing" }, (payload) => {
         if (
           payload.payload.sender === activeUserId &&
           payload.payload.receiver === currentUser.id
@@ -56,8 +55,7 @@ export default function ChatPanel() {
           setTypingStatus("escribiendo...");
           setTimeout(() => setTypingStatus(null), 3000);
         }
-      }
-    );
+      });
     channel.subscribe();
     return () => {
       supabase.removeChannel(channel);
@@ -103,7 +101,9 @@ export default function ChatPanel() {
                 <span className="text-white text-sm">{friend.username}</span>
                 {unreadMessages[friend.id] > 0 && (
                   <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">
-                    {unreadMessages[friend.id] > 99 ? "99+" : unreadMessages[friend.id]}
+                    {unreadMessages[friend.id] > 99
+                      ? "99+"
+                      : unreadMessages[friend.id]}
                   </span>
                 )}
               </div>
@@ -118,12 +118,16 @@ export default function ChatPanel() {
       )}
 
       {activeUser && (
-        <div className="fixed bottom-4 left-4 w-[380px] h-[500px] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl flex flex-col z-50">
+        <div className="fixed top-0 left-0 right-0 bottom-0 sm:top-auto sm:left-4 sm:right-auto sm:bottom-4 w-full h-full sm:w-[380px] sm:h-[500px] bg-gray-900 border border-gray-700 sm:rounded-xl rounded-none shadow-2xl flex flex-col z-50">
           <div className="p-3 border-b border-gray-700 flex justify-between items-center shadow">
             <div>
-              <span className="font-semibold text-white">💬 {activeUser.username}</span>
+              <span className="font-semibold text-white">
+                💬 {activeUser.username}
+              </span>
               {typingStatus && (
-                <span className="text-xs text-gray-400 ml-2 italic">{typingStatus}</span>
+                <span className="text-xs text-gray-400 ml-2 italic">
+                  {typingStatus}
+                </span>
               )}
             </div>
             <button
@@ -137,7 +141,10 @@ export default function ChatPanel() {
             </button>
           </div>
           <div className="flex-1 overflow-hidden flex flex-col">
-            <ChatModal user={activeUser} onClose={() => setActiveUserId(null)} />
+            <ChatModal
+              user={activeUser}
+              onClose={() => setActiveUserId(null)}
+            />
           </div>
         </div>
       )}

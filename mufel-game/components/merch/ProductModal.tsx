@@ -163,7 +163,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
       >
         <button
           onClick={onClose}
-          className="absolute top-3 right-4 text-white text-2xl hover:text-red-400 cursor-pointer"
+          className="absolute top-3 right-4 text-white text-2xl hover:text-red-400 cursor-pointer z-[10001]"
         >
           ×
         </button>

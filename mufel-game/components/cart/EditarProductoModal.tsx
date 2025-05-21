@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FiX } from "react-icons/fi";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import type { Producto, Variante } from "@/data/productos";

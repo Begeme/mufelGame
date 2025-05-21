@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import Image from "next/image";
@@ -10,14 +10,33 @@ import { ItemCarrito, useCart } from "../../context/CartContext";
 
 const colorToHex = (color: string) => {
   switch (color.toLowerCase()) {
-    case "negro": return "#000000";
-    case "blanco": return "#ffffff";
-    case "rojo": return "#ff0000";
-    case "azul": return "#0000ff";
-    case "amarillo": return "#ffff00";
-    default: return "#777";
+    case "negro":
+      return "#000000";
+    case "blanco":
+      return "#ffffff";
+    case "rojo":
+      return "#ff0000";
+    case "azul":
+      return "#0000ff";
+    case "amarillo":
+      return "#ffff00";
+    default:
+      return "#777";
   }
 };
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
 
 export default function EditarProductoModal({
   item,
@@ -32,10 +51,15 @@ export default function EditarProductoModal({
   const esUnico = producto.tipoOpciones === "unico";
   const soloTalla = producto.tipoOpciones === "talla";
 
+  const isMobile = useIsMobile();
+
   const [colorSeleccionado, setColorSeleccionado] = useState<Variante>(
-    producto.variantes.find(v => v.color === item.color) || producto.variantes[0]
+    producto.variantes.find((v) => v.color === item.color) ||
+      producto.variantes[0]
   );
-  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>(item.talla || "M");
+  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>(
+    item.talla || "M"
+  );
   const [imagenSeleccionada, setImagenSeleccionada] = useState<string>(
     colorSeleccionado.imagenes[0]
   );
@@ -71,17 +95,33 @@ export default function EditarProductoModal({
     onClose();
   };
 
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobile]);
+
   const handleCantidadChange = (delta: number) => {
-    setCantidad(prev => Math.max(1, prev + delta));
+    setCantidad((prev) => Math.max(1, prev + delta));
   };
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+      className={`fixed inset-0 ${
+        isMobile ? "z-[10000]" : "z-50"
+      } bg-black bg-opacity-80 flex items-center justify-center p-4`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="bg-gray-900 w-full max-w-3xl max-h-[95vh] overflow-y-auto rounded-lg p-4 sm:p-6 relative">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`bg-gray-900 w-full ${
+          isMobile ? "h-full rounded-none" : "max-w-3xl max-h-[95vh] rounded-lg"
+        } overflow-y-auto p-4 sm:p-6 relative`}
+      >
         <button
           onClick={onClose}
           className="absolute top-3 right-4 text-white text-2xl hover:text-red-400"
@@ -133,37 +173,39 @@ export default function EditarProductoModal({
                   </div>
                 )}
 
-                {(producto.tipoOpciones === "completo" || soloTalla) && producto.tallas && (
-                  <div className="mb-4">
-                    <p className="font-semibold mb-2">Talla:</p>
-                    <div className="flex gap-3 flex-wrap">
-                      {producto.tallas.map((t) => (
-                        <button
-                          key={t}
-                          onClick={() => {
-                            setTallaSeleccionada(t);
-                            if (soloTalla) {
-                              const variante = producto.variantes.find(
-                                (v) => v.color.toLowerCase() === t.toLowerCase()
-                              );
-                              if (variante) {
-                                setColorSeleccionado(variante);
-                                setImagenSeleccionada(variante.imagenes[0]);
+                {(producto.tipoOpciones === "completo" || soloTalla) &&
+                  producto.tallas && (
+                    <div className="mb-4">
+                      <p className="font-semibold mb-2">Talla:</p>
+                      <div className="flex gap-3 flex-wrap">
+                        {producto.tallas.map((t) => (
+                          <button
+                            key={t}
+                            onClick={() => {
+                              setTallaSeleccionada(t);
+                              if (soloTalla) {
+                                const variante = producto.variantes.find(
+                                  (v) =>
+                                    v.color.toLowerCase() === t.toLowerCase()
+                                );
+                                if (variante) {
+                                  setColorSeleccionado(variante);
+                                  setImagenSeleccionada(variante.imagenes[0]);
+                                }
                               }
-                            }
-                          }}
-                          className={`w-10 h-10 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition cursor-pointer ${
-                            tallaSeleccionada === t
-                              ? "bg-white text-black border-white"
-                              : "text-white border-gray-600 hover:border-white"
-                          }`}
-                        >
-                          {t}
-                        </button>
-                      ))}
+                            }}
+                            className={`w-10 h-10 flex items-center justify-center rounded-full border-2 text-sm font-semibold transition cursor-pointer ${
+                              tallaSeleccionada === t
+                                ? "bg-white text-black border-white"
+                                : "text-white border-gray-600 hover:border-white"
+                            }`}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </>
             )}
 

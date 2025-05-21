@@ -32,7 +32,21 @@ const colorToHex = (color: string) => {
   }
 };
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
+
 export default function ProductoModal({ producto, onClose }: Props) {
+  const isMobile = useIsMobile();
   const { agregarProducto } = useCart();
 
   const esUnico = producto.tipoOpciones === "unico";
@@ -68,6 +82,15 @@ export default function ProductoModal({ producto, onClose }: Props) {
       setTallaSeleccionada(producto.tallas?.[0] || "M");
     }
   }, [producto]);
+
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobile]);
 
   const [toastQueue, setToastQueue] = useState<string[]>([]);
   const [isToastActive, setIsToastActive] = useState(false);
@@ -125,14 +148,18 @@ export default function ProductoModal({ producto, onClose }: Props) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+      className={`fixed inset-0 ${
+        isMobile ? "z-[10000]" : "z-50"
+      } bg-black bg-opacity-80 flex items-center justify-center p-4`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 w-full max-w-3xl max-h-[95vh] overflow-y-auto rounded-lg p-4 sm:p-6 relative"
+        className={`bg-gray-900 w-full ${
+          isMobile ? "h-full rounded-none" : "max-w-3xl max-h-[95vh] rounded-lg"
+        } overflow-y-auto p-4 sm:p-6 relative`}
       >
         <button
           onClick={onClose}

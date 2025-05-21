@@ -134,10 +134,10 @@ export default function ChatPanel() {
 
       {activeUser && (
         <div
-          className={`fixed inset-0 z-50 flex flex-col bg-gray-900 border border-gray-700 shadow-2xl
-          ${isMobile
-            ? "rounded-none w-full h-full"
-            : "sm:bottom-4 sm:left-4 sm:top-auto sm:right-auto sm:w-[380px] sm:h-[500px] sm:rounded-xl"
+          className={`fixed inset-0 flex flex-col bg-gray-900 border border-gray-700 shadow-2xl ${
+            isMobile
+              ? "z-[10000] rounded-none w-full h-full"
+              : "z-50 sm:bottom-4 sm:left-4 sm:top-auto sm:right-auto sm:w-[380px] sm:h-[500px] sm:rounded-xl"
           }`}
         >
           <div className="sticky top-0 z-10 bg-gray-900 p-3 border-b border-gray-700 flex justify-between items-center shadow">
